@@ -1,12 +1,17 @@
-package com.adoleiiiiii.lifedebt.effect;
+package top.nkbe.lifedebt.effect;
 
-import com.adoleiiiiii.lifedebt.util.LifeDebtPenaltyHandler;
+import top.nkbe.lifedebt.util.LifeDebtPenaltyHandler;
 import net.minecraft.entity.LivingEntity;
 //? if <1.20.5 {
 import net.minecraft.entity.attribute.AttributeContainer;
 //?}
 import net.minecraft.entity.effect.StatusEffect;
+//? if <1.17 {
+/*// <1.17：StatusEffectCategory 尚名为 StatusEffectType（同一 intermediary class_4081）。
+import net.minecraft.entity.effect.StatusEffectType;
+*///?} else {
 import net.minecraft.entity.effect.StatusEffectCategory;
+//?}
 import net.minecraft.entity.player.PlayerEntity;
 //? if >=1.21.2 {
 /*import net.minecraft.server.world.ServerWorld;
@@ -18,7 +23,11 @@ import net.minecraft.entity.player.PlayerEntity;
 public class LifeDebtEffect extends StatusEffect {
 
 	public LifeDebtEffect() {
+		//? if <1.17 {
+		/*super(StatusEffectType.BENEFICIAL, 0xFFD700);
+		*///?} else {
 		super(StatusEffectCategory.BENEFICIAL, 0xFFD700);
+		//?}
 	}
 
 	@Override
@@ -51,7 +60,8 @@ public class LifeDebtEffect extends StatusEffect {
 	public void onApplied(LivingEntity entity, AttributeContainer attributes, int amplifier) {
 		super.onApplied(entity, attributes, amplifier);
 
-		if (entity instanceof PlayerEntity player) {
+		if (entity instanceof PlayerEntity) {
+			PlayerEntity player = (PlayerEntity) entity;
 			LifeDebtPenaltyHandler.handleEffectApplied(player);
 		}
 	}
@@ -60,7 +70,8 @@ public class LifeDebtEffect extends StatusEffect {
 	public void onRemoved(LivingEntity entity, AttributeContainer attributes, int amplifier) {
 		super.onRemoved(entity, attributes, amplifier);
 
-		if (entity instanceof PlayerEntity player) {
+		if (entity instanceof PlayerEntity) {
+			PlayerEntity player = (PlayerEntity) entity;
 			LifeDebtPenaltyHandler.handleEffectEnd(player);
 		}
 	}
@@ -69,7 +80,8 @@ public class LifeDebtEffect extends StatusEffect {
 	public void onApplied(LivingEntity entity, int amplifier) {
 		super.onApplied(entity, amplifier);
 
-		if (entity instanceof PlayerEntity player) {
+		if (entity instanceof PlayerEntity) {
+			PlayerEntity player = (PlayerEntity) entity;
 			LifeDebtPenaltyHandler.handleEffectApplied(player);
 		}
 	}

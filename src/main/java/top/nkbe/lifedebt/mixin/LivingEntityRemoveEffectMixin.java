@@ -1,7 +1,7 @@
-package com.adoleiiiiii.lifedebt.mixin;
+package top.nkbe.lifedebt.mixin;
 
-import com.adoleiiiiii.lifedebt.effect.ModEffects;
-import com.adoleiiiiii.lifedebt.util.LifeDebtPenaltyHandler;
+import top.nkbe.lifedebt.effect.ModEffects;
+import top.nkbe.lifedebt.util.LifeDebtPenaltyHandler;
 import net.minecraft.entity.LivingEntity;
 //? if <1.20.5 {
 import net.minecraft.entity.effect.StatusEffect;
@@ -34,7 +34,8 @@ public abstract class LivingEntityRemoveEffectMixin {
 			return;
 		}
 		LivingEntity self = (LivingEntity) (Object) this;
-		if (self instanceof PlayerEntity player) {
+		if (self instanceof PlayerEntity) {
+			PlayerEntity player = (PlayerEntity) self;
 			LifeDebtPenaltyHandler.handleEffectEnd(player);
 		}
 	}
@@ -48,7 +49,8 @@ public abstract class LivingEntityRemoveEffectMixin {
 			return;
 		}
 		LivingEntity self = (LivingEntity) (Object) this;
-		if (self instanceof PlayerEntity player) {
+		if (self instanceof PlayerEntity) {
+			PlayerEntity player = (PlayerEntity) self;
 			LifeDebtPenaltyHandler.handleEffectEnd(player);
 		}
 	}
@@ -58,9 +60,10 @@ public abstract class LivingEntityRemoveEffectMixin {
 	@Inject(method = "onStatusEffectsRemoved", at = @At("TAIL"))
 	private void lifedebt$onStatusEffectsRemoved(Collection<StatusEffectInstance> effects, CallbackInfo ci) {
 		LivingEntity self = (LivingEntity) (Object) this;
-		if (!(self instanceof PlayerEntity player)) {
+		if (!(self instanceof PlayerEntity)) {
 			return;
 		}
+		PlayerEntity player = (PlayerEntity) self;
 		for (StatusEffectInstance instance : effects) {
 			if (instance.getEffectType() == ModEffects.LIFE_DEBT) {
 				LifeDebtPenaltyHandler.handleEffectEnd(player);

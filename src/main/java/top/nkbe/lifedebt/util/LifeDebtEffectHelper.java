@@ -1,8 +1,13 @@
-package com.adoleiiiiii.lifedebt.util;
+package top.nkbe.lifedebt.util;
 
-import com.adoleiiiiii.lifedebt.player.LifeDebtPlayerAccess;
+import top.nkbe.lifedebt.player.LifeDebtPlayerAccess;
 import net.minecraft.entity.effect.StatusEffect;
+//? if <1.17 {
+/*// <1.17：StatusEffectCategory 尚名为 StatusEffectType（同一 intermediary class_4081）。
+import net.minecraft.entity.effect.StatusEffectType;
+*///?} else {
 import net.minecraft.entity.effect.StatusEffectCategory;
+//?}
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 //? if >=1.20.5 {
@@ -30,7 +35,11 @@ public final class LifeDebtEffectHelper {
 		List<StatusEffect> toRemove = new ArrayList<>();
 		for (StatusEffectInstance instance : player.getStatusEffects()) {
 			StatusEffect effect = instance.getEffectType();
+			//? if <1.17 {
+			/*if (effect.getType() == StatusEffectType.HARMFUL) {
+			*///?} else {
 			if (effect.getCategory() == StatusEffectCategory.HARMFUL) {
+			//?}
 				toRemove.add(effect);
 			}
 		}
@@ -57,7 +66,8 @@ public final class LifeDebtEffectHelper {
 	 * @param player 玩家实体
 	 */
 	public static void restoreHealthToMax(PlayerEntity player) {
-		if (player instanceof LifeDebtPlayerAccess access) {
+		if (player instanceof LifeDebtPlayerAccess) {
+			LifeDebtPlayerAccess access = (LifeDebtPlayerAccess) player;
 			access.lifedebt$clearMaxHealthPenalty();
 		}
 		float maxHealth = player.getMaxHealth();

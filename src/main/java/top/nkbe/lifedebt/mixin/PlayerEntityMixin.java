@@ -1,8 +1,8 @@
-package com.adoleiiiiii.lifedebt.mixin;
+package top.nkbe.lifedebt.mixin;
 
-import com.adoleiiiiii.lifedebt.effect.ModEffects;
-import com.adoleiiiiii.lifedebt.player.LifeDebtPlayerAccess;
-import com.adoleiiiiii.lifedebt.util.LifeDebtEffectHelper;
+import top.nkbe.lifedebt.effect.ModEffects;
+import top.nkbe.lifedebt.player.LifeDebtPlayerAccess;
+import top.nkbe.lifedebt.util.LifeDebtEffectHelper;
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -23,8 +23,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+//? if >=1.17 {
 import static net.minecraft.SharedConstants.TICKS_PER_MINUTE;
 import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
+//?}
 
 /**
  * 拦截图腾免死逻辑：拥有不屈 buff 时触发与图腾等效的免死效果。
@@ -41,12 +43,14 @@ public class PlayerEntityMixin {
 	private void onTryUseTotem(DamageSource source, CallbackInfoReturnable<Boolean> cir) {
 		LivingEntity entity = (LivingEntity) (Object) this;
 
-		if (!(entity instanceof PlayerEntity player)) {
+		if (!(entity instanceof PlayerEntity)) {
 			return;
 		}
+		PlayerEntity player = (PlayerEntity) entity;
 
 		if (player.hasStatusEffect(ModEffects.LIFE_DEBT)) {
-			if (player instanceof LifeDebtPlayerAccess access) {
+			if (player instanceof LifeDebtPlayerAccess) {
+				LifeDebtPlayerAccess access = (LifeDebtPlayerAccess) player;
 				// 效果结束结算或 buff 刷新过程中不应再次触发免死，避免与 removeAllEffects 等批量移除冲突
 				if (access.lifedebt$isEffectEndSettled() || access.lifedebt$isRefreshingBuff()) {
 					return;
@@ -67,6 +71,14 @@ public class PlayerEntityMixin {
 
 	@Unique
 	private void triggerLifeDebtEffect(PlayerEntity player) {
+		//? if >=1.17 {
+		final int ticksPerSecond = TICKS_PER_SECOND;
+		final int ticksPerMinute = TICKS_PER_MINUTE;
+		//?} else {
+		/*// <1.17：SharedConstants 尚无 TICKS_PER_SECOND/TICKS_PER_MINUTE，使用字面量（20 / 1200）。
+		final int ticksPerSecond = 20;
+		final int ticksPerMinute = 1200;
+		*///?}
 		LifeDebtPlayerAccess access = (LifeDebtPlayerAccess) player;
 		access.lifedebt$incrementDeathCount();
 
@@ -88,11 +100,11 @@ public class PlayerEntityMixin {
 					ModEffects.LIFE_DEBT, remainingDuration, 0, false, false, true));
 		}
 
-		player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 45 * TICKS_PER_SECOND, 1));
-		player.addStatusEffect(new StatusEffectInstance(StatusEffects.ABSORPTION, 5 * TICKS_PER_SECOND, 1));
-		player.addStatusEffect(new StatusEffectInstance(StatusEffects.FIRE_RESISTANCE, 40 * TICKS_PER_SECOND, 0));
-		player.addStatusEffect(new StatusEffectInstance(StatusEffects.NIGHT_VISION, 3 * TICKS_PER_MINUTE, 0));
-		player.addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, TICKS_PER_MINUTE, strengthAmplifier + 2));
+		player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 45 * ticksPerSecond, 1));
+		player.addStatusEffect(new StatusEffectInstance(StatusEffects.ABSORPTION, 5 * ticksPerSecond, 1));
+		player.addStatusEffect(new StatusEffectInstance(StatusEffects.FIRE_RESISTANCE, 40 * ticksPerSecond, 0));
+		player.addStatusEffect(new StatusEffectInstance(StatusEffects.NIGHT_VISION, 3 * ticksPerMinute, 0));
+		player.addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, ticksPerMinute, strengthAmplifier + 2));
 
 		LifeDebtEffectHelper.restoreHealthToMax(player);
 
@@ -106,11 +118,13 @@ public class PlayerEntityMixin {
 
 		player.incrementStat(Stats.USED.getOrCreateStat(Items.TOTEM_OF_UNDYING));
 
-		if (player instanceof ServerPlayerEntity serverPlayer) {
+		if (player instanceof ServerPlayerEntity) {
+			ServerPlayerEntity serverPlayer = (ServerPlayerEntity) player;
 			Criteria.USED_TOTEM.trigger(serverPlayer, new ItemStack(Items.TOTEM_OF_UNDYING));
 		}
 
-		if (world instanceof ServerWorld serverWorld) {
+		if (world instanceof ServerWorld) {
+			ServerWorld serverWorld = (ServerWorld) world;
 			serverWorld.spawnParticles(
 					net.minecraft.particle.ParticleTypes.TOTEM_OF_UNDYING,
 					player.getX(), player.getY() + player.getHeight() / 2.0, player.getZ(),

@@ -1,4 +1,4 @@
-package com.adoleiiiiii.lifedebt;
+package top.nkbe.lifedebt;
 
 //? if <1.21 {
 import java.util.UUID;

@@ -1,8 +1,8 @@
-package com.adoleiiiiii.lifedebt.util;
+package top.nkbe.lifedebt.util;
 
-import com.adoleiiiiii.lifedebt.advancement.ModAdvancements;
-import com.adoleiiiiii.lifedebt.damage.LifeDebtDamageTypes;
-import com.adoleiiiiii.lifedebt.player.LifeDebtPlayerAccess;
+import top.nkbe.lifedebt.advancement.ModAdvancements;
+import top.nkbe.lifedebt.damage.LifeDebtDamageTypes;
+import top.nkbe.lifedebt.player.LifeDebtPlayerAccess;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
@@ -28,13 +28,14 @@ public final class LifeDebtPenaltyHandler {
 	public static void handleEffectApplied(PlayerEntity player) {
 		//? if <1.18 {
 		/*// <1.18：Entity 尚无 getWorld()，使用 getEntityWorld()。
-		if (player.getEntityWorld().isClient || !(player instanceof LifeDebtPlayerAccess access)) {
+		if (player.getEntityWorld().isClient || !(player instanceof LifeDebtPlayerAccess)) {
 		*///?} else {
-		if (player.getWorld().isClient || !(player instanceof LifeDebtPlayerAccess access)) {
+		if (player.getWorld().isClient || !(player instanceof LifeDebtPlayerAccess)) {
 		//?}
 			return;
 		}
 
+		LifeDebtPlayerAccess access = (LifeDebtPlayerAccess) player;
 		access.lifedebt$setEffectEndSettled(false);
 		access.lifedebt$clearMaxHealthPenalty();
 
@@ -59,10 +60,11 @@ public final class LifeDebtPenaltyHandler {
 			return;
 		}
 
-		if (!(player instanceof LifeDebtPlayerAccess access)) {
+		if (!(player instanceof LifeDebtPlayerAccess)) {
 			return;
 		}
 
+		LifeDebtPlayerAccess access = (LifeDebtPlayerAccess) player;
 		if (access.lifedebt$isEffectEndSettled() || access.lifedebt$isRefreshingBuff()) {
 			return;
 		}
@@ -88,7 +90,8 @@ public final class LifeDebtPenaltyHandler {
 
 		if (baseMax - deathCount <= 0.0) {
 			access.lifedebt$applyMaxHealthPenalty(deathCount);
-			if (player instanceof ServerPlayerEntity serverPlayer) {
+			if (player instanceof ServerPlayerEntity) {
+				ServerPlayerEntity serverPlayer = (ServerPlayerEntity) player;
 				ModAdvancements.grantBurnOutBody(serverPlayer);
 			}
 			killFromBurnOutPenalty(player);

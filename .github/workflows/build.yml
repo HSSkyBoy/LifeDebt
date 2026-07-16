@@ -1,30 +1,42 @@
-# Automatically build the project and run any configured tests for every push
-# and submitted pull request. This can help catch issues that only occur on
-# certain platforms or Java versions, and provides a first line of defence
-# against bad commits.
+# Build every Minecraft version of the mod (via Stonecutter's chiseledBuild) on
+# every push and pull request. Catches version-specific compile/mixin breakage
+# across the whole 1.14.4-1.21.8 range.
 
-name: build
+name: Build
 on: [pull_request, push]
 
 jobs:
   build:
     runs-on: ubuntu-24.04
     steps:
-      - name: checkout repository
+      - name: Checkout repository
         uses: actions/checkout@v6
-      - name: validate gradle wrapper
+
+      - name: Validate Gradle wrapper
         uses: gradle/actions/wrapper-validation@v6
-      - name: setup jdk
+
+      # Gradle 8.14.4 runs on JDK 21; the per-version Java 8/16/17 toolchains are
+      # auto-provisioned by the foojay-resolver plugin during the build.
+      - name: Set up JDK 21
         uses: actions/setup-java@v5
         with:
-          java-version: '25'
-          distribution: 'microsoft'
-      - name: make gradle wrapper executable
+          java-version: '21'
+          distribution: 'zulu'
+
+      - name: Set up Gradle (with dependency cache)
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Make gradlew executable
         run: chmod +x ./gradlew
-      - name: build
-        run: ./gradlew build
-      - name: capture build artifacts
+
+      # chiseledBuild builds all registered versions and collects the jars into
+      # build/libs/<mod_version>/.
+      - name: Build all Minecraft versions
+        run: ./gradlew chiseledBuild --stacktrace
+
+      - name: Upload built jars
         uses: actions/upload-artifact@v7
         with:
-          name: Artifacts
+          name: lifedebt-jars
           path: build/libs/
+          if-no-files-found: error

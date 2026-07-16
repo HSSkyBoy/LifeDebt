@@ -1,4 +1,4 @@
-package com.adoleiiiiii.lifedebt.mixin;
+package top.nkbe.lifedebt.mixin;
 
 //? if <1.20.5 {
 import net.minecraft.item.FoodComponent;

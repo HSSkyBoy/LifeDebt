@@ -5,7 +5,7 @@
 	"name": "Life Debt",
 	"description": "Cheat death by burning your future vitality: eating a Totem of Undying grants a buff that resists lethal damage, but every death you defy is repaid as permanent max-health loss when it ends.",
 	"authors": [
-		"adoleiiiiii"
+		"NkBe"
 	],
 	"contact": {
 		"homepage": "https://github.com/HSSkyBoy/LifeDebt",
@@ -16,7 +16,7 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.adoleiiiiii.lifedebt.LifeDebt"
+			"top.nkbe.lifedebt.LifeDebt"
 		]
 	},
 	"mixins": [

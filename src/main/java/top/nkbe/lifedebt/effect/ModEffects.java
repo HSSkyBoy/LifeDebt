@@ -1,6 +1,6 @@
-package com.adoleiiiiii.lifedebt.effect;
+package top.nkbe.lifedebt.effect;
 
-import com.adoleiiiiii.lifedebt.LifeDebt;
+import top.nkbe.lifedebt.LifeDebt;
 import net.minecraft.entity.effect.StatusEffect;
 //? if <1.19.3 {
 /*import net.minecraft.util.registry.Registry;

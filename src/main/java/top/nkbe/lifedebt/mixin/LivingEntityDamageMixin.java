@@ -1,9 +1,9 @@
-package com.adoleiiiiii.lifedebt.mixin;
+package top.nkbe.lifedebt.mixin;
 
-import com.adoleiiiiii.lifedebt.damage.LifeDebtDamageTypes;
-import com.adoleiiiiii.lifedebt.effect.ModEffects;
-import com.adoleiiiiii.lifedebt.player.LifeDebtPlayerAccess;
-import com.adoleiiiiii.lifedebt.util.LifeDebtDamageHelper;
+import top.nkbe.lifedebt.damage.LifeDebtDamageTypes;
+import top.nkbe.lifedebt.effect.ModEffects;
+import top.nkbe.lifedebt.player.LifeDebtPlayerAccess;
+import top.nkbe.lifedebt.util.LifeDebtDamageHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
@@ -33,9 +33,10 @@ public abstract class LivingEntityDamageMixin {
 	private float lifedebt$modifyIncomingDamage(float amount, ServerWorld world, DamageSource source) {
 	*///?}
 		LivingEntity self = (LivingEntity) (Object) this;
-		if (!(self instanceof PlayerEntity player)) {
+		if (!(self instanceof PlayerEntity)) {
 			return amount;
 		}
+		PlayerEntity player = (PlayerEntity) self;
 		//? if <1.19.4 {
 		/*// <1.19.4：BURN_OUT 为旧式 DamageSource 单例，直接比较实例；DamageSource#isOf 尚不存在。
 		if (source == LifeDebtDamageTypes.BURN_OUT) {

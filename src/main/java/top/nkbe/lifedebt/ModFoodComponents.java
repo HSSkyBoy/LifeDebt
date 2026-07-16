@@ -1,6 +1,6 @@
-package com.adoleiiiiii.lifedebt;
+package top.nkbe.lifedebt;
 
-import com.adoleiiiiii.lifedebt.effect.ModEffects;
+import top.nkbe.lifedebt.effect.ModEffects;
 import net.minecraft.SharedConstants;
 //? if <1.20.5 {
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -31,7 +31,10 @@ public class ModFoodComponents {
 			*///?}
 			.saturationModifier(1.0f)
 			.alwaysEdible()
-			//? if <1.21.2 {
+			//? if <1.17 {
+			/*// <1.17：SharedConstants 尚无 TICKS_PER_MINUTE，使用字面量（1200）。
+			.statusEffect(new StatusEffectInstance(ModEffects.LIFE_DEBT, 5 * 1200), 1.0f)
+			*///?} elif <1.21.2 {
 			.statusEffect(new StatusEffectInstance(ModEffects.LIFE_DEBT, 5 * SharedConstants.TICKS_PER_MINUTE), 1.0f)
 			//?}
 			.build();

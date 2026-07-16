@@ -1,4 +1,4 @@
-package com.adoleiiiiii.lifedebt.player;
+package top.nkbe.lifedebt.player;
 
 /**
  * 玩家不屈状态在 NBT 中的键名。

@@ -1,6 +1,6 @@
-package com.adoleiiiiii.lifedebt.advancement;
+package top.nkbe.lifedebt.advancement;
 
-import com.adoleiiiiii.lifedebt.LifeDebt;
+import top.nkbe.lifedebt.LifeDebt;
 //? if <1.20.2 {
 import net.minecraft.advancement.Advancement;
 //?} else
