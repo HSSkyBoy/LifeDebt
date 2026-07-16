@@ -2,8 +2,6 @@
 
 一个 Fabric 模组：**用未来的生命透支现在的不死**。吃下不死图腾获得「命债」增益——期间可以抵抗致命伤害、越死越难死，但每一次被你赖掉的死亡，都会在增益结束时以**永久生命上限**偿还。还不起，就当场燃尽。
 
-> 本模组是对 [rh666666/Immortality](https://github.com/rh666666/Immortality)（原协议 CC0）功能的重写与多版本移植，重命名为更贴合机制的 **Life Debt**。
-
 ## 核心机制
 
 - **不死图腾可食用**：不死图腾变为随时可吃的食物（饱食度 6、饱和 1.0），吃下获得 **5 分钟「命债」增益**。
@@ -35,21 +33,6 @@
 
 加载器：Fabric Loader `>=0.19.3`（全版本通用）。需要 Fabric API。
 
-## 构建
-
-需要 JDK（构建时会按各版本自动配置 Java 8/16/17/21 工具链）。构建使用 **Gradle 8.14.4**（通过 wrapper 提供，无需手动安装）。
-
-```bash
-# 构建当前激活版本（默认 1.20.1）
-./gradlew build
-
-# 切换激活版本
-./gradlew "Set active project to 1.21.1"
-
-# 构建全部版本，产物汇总到 build/libs/<mod_version>/
-./gradlew chiseledBuild
-```
-
 ## 许可
 
-[Apache License 2.0](./LICENSE)。原始模组由 rh666666 以 CC0 发布。
+[Apache License 2.0](./LICENSE)。

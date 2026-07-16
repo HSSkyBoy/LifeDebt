@@ -19,12 +19,12 @@ val requiredJava: JavaVersion = when {
 }
 
 loom {
-	splitEnvironmentSourceSets()
-
+	// No splitEnvironmentSourceSets(): it requires a bundled server jar (MC 1.18+) and
+	// breaks configuration on 1.14-1.17. The mod has no client-only code, so a single
+	// merged `main` source set works across the whole 1.14.4-1.21.8 range.
 	mods {
 		create("lifedebt") {
 			sourceSet(sourceSets["main"])
-			sourceSet(sourceSets["client"])
 		}
 	}
 }
@@ -57,22 +57,24 @@ tasks.withType<JavaCompile>().configureEach {
 }
 
 val modVersion = version.toString()
+val mixinJavaLevel = "JAVA_${requiredJava.majorVersion}"
 tasks.processResources {
 	inputs.property("version", modVersion)
 	inputs.property("minecraft_version", mcVersion)
 
 	filesMatching("fabric.mod.json") {
-		expand("version" to modVersion, "minecraft_version" to mcVersion)
+		expand(
+			"version" to modVersion,
+			"minecraft_version" to mcVersion,
+			"java_version" to requiredJava.majorVersion,
+		)
 	}
-}
 
-// The mixin JSONs hard-code "JAVA_17"; each Minecraft version compiles to a different
-// bytecode level (Java 8/16/17/21), and Mixin's compatibilityLevel must be >= that level.
-// Rewrite it per version at resource-processing time (main and client source sets both).
-val mixinJavaLevel = "JAVA_${requiredJava.majorVersion}"
-tasks.withType<ProcessResources>().configureEach {
+	// The mixin JSON hard-codes "JAVA_17"; each Minecraft version compiles to a different
+	// bytecode level (Java 8/16/17/21), and Mixin's compatibilityLevel must be >= that level.
+	// Rewrite it per version at resource-processing time.
 	inputs.property("mixinJavaLevel", mixinJavaLevel)
-	filesMatching(listOf("lifedebt.mixins.json", "lifedebt.client.mixins.json")) {
+	filesMatching("lifedebt.mixins.json") {
 		filter { line -> line.replace("\"JAVA_17\"", "\"$mixinJavaLevel\"") }
 	}
 }

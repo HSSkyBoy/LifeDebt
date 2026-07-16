@@ -17,22 +17,15 @@
 	"entrypoints": {
 		"main": [
 			"com.adoleiiiiii.lifedebt.LifeDebt"
-		],
-		"client": [
-			"com.adoleiiiiii.lifedebt.client.LifeDebtClient"
 		]
 	},
 	"mixins": [
-		"lifedebt.mixins.json",
-		{
-			"config": "lifedebt.client.mixins.json",
-			"environment": "client"
-		}
+		"lifedebt.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.19.3",
 		"minecraft": "~${minecraft_version}",
-		"java": ">=17",
+		"java": ">=${java_version}",
 		"fabric-api": "*"
 	}
 }
