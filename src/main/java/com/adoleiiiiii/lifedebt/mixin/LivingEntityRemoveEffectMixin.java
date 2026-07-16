@@ -17,6 +17,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 //?} else {
 /*import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 *///?}
+//? if >=1.21.2 {
+/*import java.util.Collection;
+*///?}
 
 /**
  * 在不屈效果被移除时再次尝试结算惩罚（兜底，防止 onRemoved 未触发）。
@@ -35,7 +38,7 @@ public abstract class LivingEntityRemoveEffectMixin {
 			LifeDebtPenaltyHandler.handleEffectEnd(player);
 		}
 	}
-	//?} else {
+	//?} elif <1.21.2 {
 	/*// >=1.20.5：StatusEffect 不再提供带 LivingEntity 的 onRemoved 钩子，
 	// 改为注入 onStatusEffectRemoved（removeStatusEffect、clearStatusEffects 与效果自然到期均会经过此方法），
 	// 作为效果结束结算的主路径。
@@ -47,6 +50,22 @@ public abstract class LivingEntityRemoveEffectMixin {
 		LivingEntity self = (LivingEntity) (Object) this;
 		if (self instanceof PlayerEntity player) {
 			LifeDebtPenaltyHandler.handleEffectEnd(player);
+		}
+	}
+	*///?} else {
+	/*// >=1.21.2：onStatusEffectRemoved 改为批量形式 onStatusEffectsRemoved(Collection)
+	// （同一 intermediary method_6129），遍历集合命中不屈效果时结算。
+	@Inject(method = "onStatusEffectsRemoved", at = @At("TAIL"))
+	private void lifedebt$onStatusEffectsRemoved(Collection<StatusEffectInstance> effects, CallbackInfo ci) {
+		LivingEntity self = (LivingEntity) (Object) this;
+		if (!(self instanceof PlayerEntity player)) {
+			return;
+		}
+		for (StatusEffectInstance instance : effects) {
+			if (instance.getEffectType() == ModEffects.LIFE_DEBT) {
+				LifeDebtPenaltyHandler.handleEffectEnd(player);
+				return;
+			}
 		}
 	}
 	*///?}

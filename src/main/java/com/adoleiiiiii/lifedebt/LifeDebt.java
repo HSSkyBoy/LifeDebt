@@ -35,12 +35,21 @@ public class LifeDebt implements ModInitializer {
 		if (totem instanceof ItemAccessor accessor) {
 			accessor.setFoodComponent(ModFoodComponents.TOTEM_OF_UNDYING);
 		}
-		//?} else {
+		//?} elif <1.21.2 {
 		/*// >=1.20.5：食物属性存放在物品的数据组件表中，重建 ComponentMap 并追加 FOOD 组件。
 		if (totem instanceof ItemAccessor accessor) {
 			accessor.setComponents(ComponentMap.builder()
 					.addAll(totem.getComponents())
 					.add(DataComponentTypes.FOOD, ModFoodComponents.TOTEM_OF_UNDYING)
+					.build());
+		}
+		*///?} else {
+		/*// >=1.21.2：进食效果拆分至 CONSUMABLE 组件，需同时追加 FOOD 与 CONSUMABLE。
+		if (totem instanceof ItemAccessor accessor) {
+			accessor.setComponents(ComponentMap.builder()
+					.addAll(totem.getComponents())
+					.add(DataComponentTypes.FOOD, ModFoodComponents.TOTEM_OF_UNDYING)
+					.add(DataComponentTypes.CONSUMABLE, ModFoodComponents.TOTEM_OF_UNDYING_CONSUMABLE)
 					.build());
 		}
 		*///?}

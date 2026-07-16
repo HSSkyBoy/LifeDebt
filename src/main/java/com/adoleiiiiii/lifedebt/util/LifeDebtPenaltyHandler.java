@@ -8,6 +8,9 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
+//? if >=1.21.2 {
+/*import net.minecraft.server.world.ServerWorld;
+*///?}
 
 /**
  * 不屈 buff 结束时的生命上限惩罚逻辑。
@@ -58,7 +61,12 @@ public final class LifeDebtPenaltyHandler {
 		int deathCount = access.lifedebt$getDeathCount();
 
 		access.lifedebt$clearMaxHealthPenalty();
+		//? if <1.21.2 {
 		EntityAttributeInstance maxHealthAttr = player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH);
+		//?} else {
+		/*// >=1.21.2：属性常量更名（GENERIC_ 前缀移除）。
+		EntityAttributeInstance maxHealthAttr = player.getAttributeInstance(EntityAttributes.MAX_HEALTH);
+		*///?}
 		double baseMax = maxHealthAttr != null ? maxHealthAttr.getBaseValue() : player.getMaxHealth();
 
 		access.lifedebt$setEffectEndSettled(true);
@@ -90,6 +98,11 @@ public final class LifeDebtPenaltyHandler {
 	 */
 	private static void killFromBurnOutPenalty(PlayerEntity player) {
 		DamageSource source = player.getDamageSources().create(LifeDebtDamageTypes.BURN_OUT);
+		//? if <1.21.2 {
 		player.damage(source, Float.MAX_VALUE);
+		//?} else {
+		/*// >=1.21.2：damage 需要显式传入 ServerWorld；此处仅在服务端调用，直接转换当前世界即可。
+		player.damage((ServerWorld) player.getWorld(), source, Float.MAX_VALUE);
+		*///?}
 	}
 }

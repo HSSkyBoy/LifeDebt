@@ -8,6 +8,9 @@ import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.entity.player.PlayerEntity;
+//? if >=1.21.2 {
+/*import net.minecraft.server.world.ServerWorld;
+*///?}
 
 /**
  * 不屈状态效果：buff 期间抵抗死亡并获得叠乘减伤与击退抗性，结束时按死亡次数扣除生命上限。
@@ -28,9 +31,16 @@ public class LifeDebtEffect extends StatusEffect {
 	public void applyUpdateEffect(LivingEntity entity, int amplifier) {
 		// 不屈效果是被动触发的，不需要每 tick 更新
 	}
-	//?} else {
+	//?} elif <1.21.2 {
 	/*@Override
 	public boolean applyUpdateEffect(LivingEntity entity, int amplifier) {
+		// 不屈效果是被动触发的，不需要每 tick 更新；返回 false 会导致效果被立即移除，必须返回 true
+		return true;
+	}
+	*///?} else {
+	/*// >=1.21.2：applyUpdateEffect 增加 ServerWorld 参数。
+	@Override
+	public boolean applyUpdateEffect(ServerWorld world, LivingEntity entity, int amplifier) {
 		// 不屈效果是被动触发的，不需要每 tick 更新；返回 false 会导致效果被立即移除，必须返回 true
 		return true;
 	}

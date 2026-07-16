@@ -32,7 +32,12 @@ import static net.minecraft.SharedConstants.TICKS_PER_SECOND;
 @Mixin(LivingEntity.class)
 public class PlayerEntityMixin {
 
+	//? if <1.21.2 {
 	@Inject(method = "tryUseTotem", at = @At("HEAD"), cancellable = true)
+	//?} else {
+	/*// >=1.21.2：tryUseTotem 更名为 tryUseDeathProtector（签名不变，仍为 (DamageSource)Z）。
+	@Inject(method = "tryUseDeathProtector", at = @At("HEAD"), cancellable = true)
+	*///?}
 	private void onTryUseTotem(DamageSource source, CallbackInfoReturnable<Boolean> cir) {
 		LivingEntity entity = (LivingEntity) (Object) this;
 

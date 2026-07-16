@@ -10,7 +10,13 @@ import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
+//? if <1.21.6 {
 import net.minecraft.nbt.NbtCompound;
+//?} else {
+/*// >=1.21.6：实体数据读写改用 ReadView/WriteView 抽象，不再直接操作 NbtCompound。
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
+*///?}
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -35,6 +41,7 @@ public abstract class PlayerEntityLifeDebtMixin implements LifeDebtPlayerAccess 
 	@Unique
 	private boolean lifedebt$effectEndSettled;
 
+	//? if <1.21.6 {
 	@Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))
 	private void lifedebt$writeCustomDataToNbt(NbtCompound nbt, CallbackInfo ci) {
 		NbtCompound data = new NbtCompound();
@@ -43,7 +50,19 @@ public abstract class PlayerEntityLifeDebtMixin implements LifeDebtPlayerAccess 
 		data.putBoolean(LifeDebtPlayerNbt.EFFECT_END_SETTLED, lifedebt$effectEndSettled);
 		nbt.put(LifeDebtPlayerNbt.ROOT, data);
 	}
+	//?} else {
+	/*// >=1.21.6：writeCustomDataToNbt 更名为 writeCustomData(WriteView)（同一 intermediary method_5652），
+	// WriteView#get 返回以指定键挂载的子视图，等价于原先的嵌套 NbtCompound。
+	@Inject(method = "writeCustomData", at = @At("TAIL"))
+	private void lifedebt$writeCustomDataToNbt(WriteView view, CallbackInfo ci) {
+		WriteView data = view.get(LifeDebtPlayerNbt.ROOT);
+		data.putInt(LifeDebtPlayerNbt.DEATH_COUNT, lifedebt$deathCount);
+		data.putBoolean(LifeDebtPlayerNbt.BUFF_SESSION_ACTIVE, lifedebt$buffSessionActive);
+		data.putBoolean(LifeDebtPlayerNbt.EFFECT_END_SETTLED, lifedebt$effectEndSettled);
+	}
+	*///?}
 
+	//? if <1.21.5 {
 	@Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
 	private void lifedebt$readCustomDataFromNbt(NbtCompound nbt, CallbackInfo ci) {
 		PlayerEntity player = (PlayerEntity) (Object) this;
@@ -60,6 +79,43 @@ public abstract class PlayerEntityLifeDebtMixin implements LifeDebtPlayerAccess 
 		lifedebt$deathCount = Math.max(0, data.getInt(LifeDebtPlayerNbt.DEATH_COUNT));
 		lifedebt$buffSessionActive = data.getBoolean(LifeDebtPlayerNbt.BUFF_SESSION_ACTIVE);
 		lifedebt$effectEndSettled = data.getBoolean(LifeDebtPlayerNbt.EFFECT_END_SETTLED);
+	//?} elif <1.21.6 {
+	/*// 1.21.5：NbtCompound 的类型化 getter 改为返回 Optional，改用带默认值的重载。
+	@Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
+	private void lifedebt$readCustomDataFromNbt(NbtCompound nbt, CallbackInfo ci) {
+		PlayerEntity player = (PlayerEntity) (Object) this;
+		lifedebt$refreshingBuff = false;
+
+		if (!nbt.contains(LifeDebtPlayerNbt.ROOT)) {
+			if (!player.getWorld().isClient) {
+				lifedebt$clearSessionState();
+			}
+			return;
+		}
+
+		NbtCompound data = nbt.getCompoundOrEmpty(LifeDebtPlayerNbt.ROOT);
+		lifedebt$deathCount = Math.max(0, data.getInt(LifeDebtPlayerNbt.DEATH_COUNT, 0));
+		lifedebt$buffSessionActive = data.getBoolean(LifeDebtPlayerNbt.BUFF_SESSION_ACTIVE, false);
+		lifedebt$effectEndSettled = data.getBoolean(LifeDebtPlayerNbt.EFFECT_END_SETTLED, false);
+	*///?} else {
+	/*// >=1.21.6：readCustomDataFromNbt 更名为 readCustomData(ReadView)（同一 intermediary method_5749）。
+	@Inject(method = "readCustomData", at = @At("TAIL"))
+	private void lifedebt$readCustomDataFromNbt(ReadView view, CallbackInfo ci) {
+		PlayerEntity player = (PlayerEntity) (Object) this;
+		lifedebt$refreshingBuff = false;
+
+		ReadView data = view.getOptionalReadView(LifeDebtPlayerNbt.ROOT).orElse(null);
+		if (data == null) {
+			if (!player.getWorld().isClient) {
+				lifedebt$clearSessionState();
+			}
+			return;
+		}
+
+		lifedebt$deathCount = Math.max(0, data.getInt(LifeDebtPlayerNbt.DEATH_COUNT, 0));
+		lifedebt$buffSessionActive = data.getBoolean(LifeDebtPlayerNbt.BUFF_SESSION_ACTIVE, false);
+		lifedebt$effectEndSettled = data.getBoolean(LifeDebtPlayerNbt.EFFECT_END_SETTLED, false);
+	*///?}
 
 		if (player.getWorld().isClient) {
 			return;
@@ -141,7 +197,11 @@ public abstract class PlayerEntityLifeDebtMixin implements LifeDebtPlayerAccess 
 			return;
 		}
 		PlayerEntity player = (PlayerEntity) (Object) this;
+		//? if <1.21.2 {
 		EntityAttributeInstance maxHealth = player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH);
+		//?} else {
+		/*EntityAttributeInstance maxHealth = player.getAttributeInstance(EntityAttributes.MAX_HEALTH);
+		*///?}
 		if (maxHealth == null) {
 			return;
 		}
@@ -172,7 +232,11 @@ public abstract class PlayerEntityLifeDebtMixin implements LifeDebtPlayerAccess 
 	@Override
 	public void lifedebt$clearMaxHealthPenalty() {
 		PlayerEntity player = (PlayerEntity) (Object) this;
+		//? if <1.21.2 {
 		EntityAttributeInstance maxHealth = player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH);
+		//?} else {
+		/*EntityAttributeInstance maxHealth = player.getAttributeInstance(EntityAttributes.MAX_HEALTH);
+		*///?}
 		if (maxHealth != null) {
 			maxHealth.removeModifier(LifeDebtConstants.MAX_HEALTH_PENALTY_MODIFIER_ID);
 		}
@@ -184,8 +248,13 @@ public abstract class PlayerEntityLifeDebtMixin implements LifeDebtPlayerAccess 
 	@Unique
 	private void lifedebt$syncKnockbackResistance() {
 		PlayerEntity player = (PlayerEntity) (Object) this;
+		//? if <1.21.2 {
 		EntityAttributeInstance knockbackResistance =
 				player.getAttributeInstance(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE);
+		//?} else {
+		/*EntityAttributeInstance knockbackResistance =
+				player.getAttributeInstance(EntityAttributes.KNOCKBACK_RESISTANCE);
+		*///?}
 		if (knockbackResistance == null) {
 			return;
 		}
@@ -230,8 +299,13 @@ public abstract class PlayerEntityLifeDebtMixin implements LifeDebtPlayerAccess 
 	@Unique
 	private void lifedebt$clearKnockbackResistance() {
 		PlayerEntity player = (PlayerEntity) (Object) this;
+		//? if <1.21.2 {
 		EntityAttributeInstance knockbackResistance =
 				player.getAttributeInstance(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE);
+		//?} else {
+		/*EntityAttributeInstance knockbackResistance =
+				player.getAttributeInstance(EntityAttributes.KNOCKBACK_RESISTANCE);
+		*///?}
 		if (knockbackResistance != null) {
 			knockbackResistance.removeModifier(LifeDebtConstants.KNOCKBACK_RESISTANCE_MODIFIER_ID);
 		}
