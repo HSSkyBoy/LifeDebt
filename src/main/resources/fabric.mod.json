@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"id": "lifedebt",
+	"version": "${version}",
+	"name": "Life Debt",
+	"description": "Cheat death by burning your future vitality: eating a Totem of Undying grants a buff that resists lethal damage, but every death you defy is repaid as permanent max-health loss when it ends.",
+	"authors": [
+		"adoleiiiiii"
+	],
+	"contact": {
+		"homepage": "https://github.com/HSSkyBoy/LifeDebt",
+		"sources": "https://github.com/HSSkyBoy/LifeDebt"
+	},
+	"license": "Apache-2.0",
+	"icon": "assets/lifedebt/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.adoleiiiiii.lifedebt.LifeDebt"
+		],
+		"client": [
+			"com.adoleiiiiii.lifedebt.client.LifeDebtClient"
+		]
+	},
+	"mixins": [
+		"lifedebt.mixins.json",
+		{
+			"config": "lifedebt.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	}
+}

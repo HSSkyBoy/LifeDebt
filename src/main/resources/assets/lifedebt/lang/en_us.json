@@ -1,0 +1,7 @@
+{
+    "effect.lifedebt.life_debt": "Life Debt",
+    "effect.lifedebt.life_debt.description": "For the duration, fatal damage triggers a Totem of Undying effect and grants or strengthens Strength. Each death resisted stacks damage reduction and grants knockback resistance equal to that reduction (up to 100%). When the effect ends, max health is reduced by your death count during the buff; this penalty is removed after you respawn.",
+    "advancements.lifedebt.burn_out_body.title": "Consume me!",
+    "advancements.lifedebt.burn_out_body.description": "Burned yourself out in endless revival.",
+    "death.attack.burn_out": "%1$s burned out"
+}
