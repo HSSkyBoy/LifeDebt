@@ -6,6 +6,10 @@ import com.adoleiiiiii.lifedebt.mixin.ItemAccessor;
 import com.adoleiiiiii.lifedebt.player.LifeDebtPlayerAccess;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+//? if >=1.20.5 {
+/*import net.minecraft.component.ComponentMap;
+import net.minecraft.component.DataComponentTypes;
+*///?}
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 
@@ -27,8 +31,18 @@ public class LifeDebt implements ModInitializer {
 		});
 
 		Item totem = Items.TOTEM_OF_UNDYING;
+		//? if <1.20.5 {
 		if (totem instanceof ItemAccessor accessor) {
 			accessor.setFoodComponent(ModFoodComponents.TOTEM_OF_UNDYING);
 		}
+		//?} else {
+		/*// >=1.20.5：食物属性存放在物品的数据组件表中，重建 ComponentMap 并追加 FOOD 组件。
+		if (totem instanceof ItemAccessor accessor) {
+			accessor.setComponents(ComponentMap.builder()
+					.addAll(totem.getComponents())
+					.add(DataComponentTypes.FOOD, ModFoodComponents.TOTEM_OF_UNDYING)
+					.build());
+		}
+		*///?}
 	}
 }

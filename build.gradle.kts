@@ -59,9 +59,21 @@ tasks.withType<JavaCompile>().configureEach {
 val modVersion = version.toString()
 tasks.processResources {
 	inputs.property("version", modVersion)
+	inputs.property("minecraft_version", mcVersion)
 
 	filesMatching("fabric.mod.json") {
-		expand("version" to modVersion)
+		expand("version" to modVersion, "minecraft_version" to mcVersion)
+	}
+}
+
+// The mixin JSONs hard-code "JAVA_17"; each Minecraft version compiles to a different
+// bytecode level (Java 8/16/17/21), and Mixin's compatibilityLevel must be >= that level.
+// Rewrite it per version at resource-processing time (main and client source sets both).
+val mixinJavaLevel = "JAVA_${requiredJava.majorVersion}"
+tasks.withType<ProcessResources>().configureEach {
+	inputs.property("mixinJavaLevel", mixinJavaLevel)
+	filesMatching(listOf("lifedebt.mixins.json", "lifedebt.client.mixins.json")) {
+		filter { line -> line.replace("\"JAVA_17\"", "\"$mixinJavaLevel\"") }
 	}
 }
 

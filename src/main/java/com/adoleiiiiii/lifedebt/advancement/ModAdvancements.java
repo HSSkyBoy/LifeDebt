@@ -1,7 +1,10 @@
 package com.adoleiiiiii.lifedebt.advancement;
 
 import com.adoleiiiiii.lifedebt.LifeDebt;
+//? if <1.20.2 {
 import net.minecraft.advancement.Advancement;
+//?} else
+/*import net.minecraft.advancement.AdvancementEntry;*/
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
@@ -14,7 +17,11 @@ import java.util.Objects;
 public final class ModAdvancements {
 
 	/** 进度 ID：燃尽此身（「超越生死」的子进度）。 */
+	//? if <1.21 {
 	public static final Identifier BURN_OUT_BODY = new Identifier(LifeDebt.MOD_ID, "burn_out_body");
+	//?} else {
+	/*public static final Identifier BURN_OUT_BODY = Identifier.of(LifeDebt.MOD_ID, "burn_out_body");
+	*///?}
 
 	private static final String BURN_OUT_BODY_CRITERION = "burn_out_body";
 
@@ -28,7 +35,10 @@ public final class ModAdvancements {
 	 */
 	public static void grantBurnOutBody(ServerPlayerEntity player) {
 		MinecraftServer server = Objects.requireNonNull(player.getServer());
+		//? if <1.20.2 {
 		Advancement advancement = server.getAdvancementLoader().get(BURN_OUT_BODY);
+		//?} else
+		/*AdvancementEntry advancement = server.getAdvancementLoader().get(BURN_OUT_BODY);*/
 		if (advancement != null) {
 			player.getAdvancementTracker().grantCriterion(advancement, BURN_OUT_BODY_CRITERION);
 		}
