@@ -52,7 +52,12 @@ public class PlayerEntityMixin {
 					return;
 				}
 			}
+			//? if <1.18 {
+			/*// <1.18：Entity 尚无 getWorld()，使用 getEntityWorld()。
+			if (!player.getEntityWorld().isClient) {
+			*///?} else {
 			if (!player.getWorld().isClient) {
+			//?}
 				triggerLifeDebtEffect(player);
 			}
 			cir.setReturnValue(true);
@@ -91,7 +96,11 @@ public class PlayerEntityMixin {
 
 		LifeDebtEffectHelper.restoreHealthToMax(player);
 
+		//? if <1.18 {
+		/*World world = player.getEntityWorld();
+		*///?} else {
 		World world = player.getWorld();
+		//?}
 		world.playSound(null, player.getX(), player.getY(), player.getZ(),
 				SoundEvents.ITEM_TOTEM_USE, SoundCategory.PLAYERS, 1.0f, 1.0f);
 

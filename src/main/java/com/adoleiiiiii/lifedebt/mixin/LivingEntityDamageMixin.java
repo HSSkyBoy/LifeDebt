@@ -36,9 +36,16 @@ public abstract class LivingEntityDamageMixin {
 		if (!(self instanceof PlayerEntity player)) {
 			return amount;
 		}
+		//? if <1.19.4 {
+		/*// <1.19.4：BURN_OUT 为旧式 DamageSource 单例，直接比较实例；DamageSource#isOf 尚不存在。
+		if (source == LifeDebtDamageTypes.BURN_OUT) {
+			return amount;
+		}
+		*///?} else {
 		if (source.isOf(LifeDebtDamageTypes.BURN_OUT)) {
 			return amount;
 		}
+		//?}
 		if (!player.hasStatusEffect(ModEffects.LIFE_DEBT)) {
 			return amount;
 		}

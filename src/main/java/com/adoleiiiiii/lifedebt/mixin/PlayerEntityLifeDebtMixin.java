@@ -62,7 +62,25 @@ public abstract class PlayerEntityLifeDebtMixin implements LifeDebtPlayerAccess 
 	}
 	*///?}
 
-	//? if <1.21.5 {
+	//? if <1.18 {
+	/*// <1.18：Entity 尚无 getWorld()，使用 getEntityWorld()，其余与 <1.21.5 分支一致。
+	@Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
+	private void lifedebt$readCustomDataFromNbt(NbtCompound nbt, CallbackInfo ci) {
+		PlayerEntity player = (PlayerEntity) (Object) this;
+		lifedebt$refreshingBuff = false;
+
+		if (!nbt.contains(LifeDebtPlayerNbt.ROOT)) {
+			if (!player.getEntityWorld().isClient) {
+				lifedebt$clearSessionState();
+			}
+			return;
+		}
+
+		NbtCompound data = nbt.getCompound(LifeDebtPlayerNbt.ROOT);
+		lifedebt$deathCount = Math.max(0, data.getInt(LifeDebtPlayerNbt.DEATH_COUNT));
+		lifedebt$buffSessionActive = data.getBoolean(LifeDebtPlayerNbt.BUFF_SESSION_ACTIVE);
+		lifedebt$effectEndSettled = data.getBoolean(LifeDebtPlayerNbt.EFFECT_END_SETTLED);
+	*///?} elif <1.21.5 {
 	@Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
 	private void lifedebt$readCustomDataFromNbt(NbtCompound nbt, CallbackInfo ci) {
 		PlayerEntity player = (PlayerEntity) (Object) this;
@@ -117,7 +135,11 @@ public abstract class PlayerEntityLifeDebtMixin implements LifeDebtPlayerAccess 
 		lifedebt$effectEndSettled = data.getBoolean(LifeDebtPlayerNbt.EFFECT_END_SETTLED, false);
 	*///?}
 
+		//? if <1.18 {
+		/*if (player.getEntityWorld().isClient) {
+		*///?} else {
 		if (player.getWorld().isClient) {
+		//?}
 			return;
 		}
 

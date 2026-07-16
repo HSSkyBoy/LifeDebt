@@ -2,8 +2,12 @@ package com.adoleiiiiii.lifedebt.effect;
 
 import com.adoleiiiiii.lifedebt.LifeDebt;
 import net.minecraft.entity.effect.StatusEffect;
+//? if <1.19.3 {
+/*import net.minecraft.util.registry.Registry;
+*///?} else {
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+//?}
 //? if >=1.20.5 {
 /*import net.minecraft.registry.entry.RegistryEntry;
 *///?}
@@ -31,7 +35,10 @@ public class ModEffects {
 	 * 向游戏注册不屈状态效果。
 	 */
 	public static void initialize() {
-		//? if <1.20.5 {
+		//? if <1.19.3 {
+		/*// <1.19.3：注册表位于 net.minecraft.util.registry.Registry，各注册表为其静态字段。
+		Registry.register(Registry.STATUS_EFFECT, new Identifier(LifeDebt.MOD_ID, "life_debt"), LIFE_DEBT);
+		*///?} elif <1.20.5 {
 		Registry.register(Registries.STATUS_EFFECT, new Identifier(LifeDebt.MOD_ID, "life_debt"), LIFE_DEBT);
 		//?} else {
 		/*// >=1.20.5：注册已在 LIFE_DEBT 字段初始化时通过 Registry.registerReference 完成，

@@ -26,7 +26,12 @@ public final class LifeDebtPenaltyHandler {
 	 * @param player 玩家实体
 	 */
 	public static void handleEffectApplied(PlayerEntity player) {
+		//? if <1.18 {
+		/*// <1.18：Entity 尚无 getWorld()，使用 getEntityWorld()。
+		if (player.getEntityWorld().isClient || !(player instanceof LifeDebtPlayerAccess access)) {
+		*///?} else {
 		if (player.getWorld().isClient || !(player instanceof LifeDebtPlayerAccess access)) {
+		//?}
 			return;
 		}
 
@@ -46,7 +51,11 @@ public final class LifeDebtPenaltyHandler {
 	 * @param player 玩家实体
 	 */
 	public static void handleEffectEnd(PlayerEntity player) {
+		//? if <1.18 {
+		/*if (player.getEntityWorld().isClient) {
+		*///?} else {
 		if (player.getWorld().isClient) {
+		//?}
 			return;
 		}
 
@@ -97,7 +106,12 @@ public final class LifeDebtPenaltyHandler {
 	 * @param player 玩家实体
 	 */
 	private static void killFromBurnOutPenalty(PlayerEntity player) {
+		//? if <1.19.4 {
+		/*// <1.19.4：Entity#getDamageSources 尚不存在，直接使用静态 DamageSource 单例。
+		DamageSource source = LifeDebtDamageTypes.BURN_OUT;
+		*///?} else {
 		DamageSource source = player.getDamageSources().create(LifeDebtDamageTypes.BURN_OUT);
+		//?}
 		//? if <1.21.2 {
 		player.damage(source, Float.MAX_VALUE);
 		//?} else {
