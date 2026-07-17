@@ -18,13 +18,16 @@ plugins {
 
 stonecutter {
 	create(rootProject) {
+		// One representative build per API-compatible "era"; each jar declares a version
+		// range (see build.gradle.kts) so a single jar covers every MC version in its era.
+		// Together these span 1.16.5–1.21.11 with no gaps.
 		versions(
-			"1.16.5", "1.17.1", "1.18.2",
-			"1.19.2", "1.19.4", "1.20.1", "1.20.4",
-			"1.20.6", "1.21.1", "1.21.4", "1.21.8"
+			"1.16.5", "1.17.1", "1.19.2", "1.19.3",
+			"1.20.1", "1.20.4", "1.20.6", "1.21.1",
+			"1.21.4", "1.21.5", "1.21.8", "1.21.11"
 		)
 		// The version committed to VCS; also the active development version.
-		vcsVersion = "1.20.1"
+		vcsVersion = "1.20.4"
 	}
 }
 

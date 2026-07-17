@@ -35,7 +35,11 @@ public final class ModAdvancements {
 	 * @param player 服务端玩家
 	 */
 	public static void grantBurnOutBody(ServerPlayerEntity player) {
+		//? if <1.21.9 {
 		MinecraftServer server = Objects.requireNonNull(player.getServer());
+		//?} else {
+		/*MinecraftServer server = Objects.requireNonNull(player.getEntityWorld().getServer());
+		*///?}
 		//? if <1.20.2 {
 		Advancement advancement = server.getAdvancementLoader().get(BURN_OUT_BODY);
 		//?} else {

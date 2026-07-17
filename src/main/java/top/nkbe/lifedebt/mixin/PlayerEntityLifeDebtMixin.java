@@ -87,7 +87,7 @@ public abstract class PlayerEntityLifeDebtMixin implements LifeDebtPlayerAccess 
 		lifedebt$refreshingBuff = false;
 
 		if (!nbt.contains(LifeDebtPlayerNbt.ROOT)) {
-			if (!player.getWorld().isClient) {
+			if (!top.nkbe.lifedebt.util.LifeDebtWorldHelper.getWorld(player).isClient) {
 				lifedebt$clearSessionState();
 			}
 			return;
@@ -105,7 +105,7 @@ public abstract class PlayerEntityLifeDebtMixin implements LifeDebtPlayerAccess 
 		lifedebt$refreshingBuff = false;
 
 		if (!nbt.contains(LifeDebtPlayerNbt.ROOT)) {
-			if (!player.getWorld().isClient) {
+			if (!top.nkbe.lifedebt.util.LifeDebtWorldHelper.isClient(player)) {
 				lifedebt$clearSessionState();
 			}
 			return;
@@ -124,7 +124,7 @@ public abstract class PlayerEntityLifeDebtMixin implements LifeDebtPlayerAccess 
 
 		ReadView data = view.getOptionalReadView(LifeDebtPlayerNbt.ROOT).orElse(null);
 		if (data == null) {
-			if (!player.getWorld().isClient) {
+			if (!top.nkbe.lifedebt.util.LifeDebtWorldHelper.isClient(player)) {
 				lifedebt$clearSessionState();
 			}
 			return;
@@ -138,7 +138,7 @@ public abstract class PlayerEntityLifeDebtMixin implements LifeDebtPlayerAccess 
 		//? if <1.18 {
 		/*if (player.getEntityWorld().isClient) {
 		*///?} else {
-		if (player.getWorld().isClient) {
+		if (top.nkbe.lifedebt.util.LifeDebtWorldHelper.isClient(player)) {
 		//?}
 			return;
 		}

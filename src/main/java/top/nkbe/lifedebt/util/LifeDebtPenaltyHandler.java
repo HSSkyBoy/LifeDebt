@@ -30,7 +30,7 @@ public final class LifeDebtPenaltyHandler {
 		/*// <1.18：Entity 尚无 getWorld()，使用 getEntityWorld()。
 		if (player.getEntityWorld().isClient || !(player instanceof LifeDebtPlayerAccess)) {
 		*///?} else {
-		if (player.getWorld().isClient || !(player instanceof LifeDebtPlayerAccess)) {
+		if (LifeDebtWorldHelper.isClient(player) || !(player instanceof LifeDebtPlayerAccess)) {
 		//?}
 			return;
 		}
@@ -55,7 +55,7 @@ public final class LifeDebtPenaltyHandler {
 		//? if <1.18 {
 		/*if (player.getEntityWorld().isClient) {
 		*///?} else {
-		if (player.getWorld().isClient) {
+		if (LifeDebtWorldHelper.isClient(player)) {
 		//?}
 			return;
 		}
@@ -119,7 +119,7 @@ public final class LifeDebtPenaltyHandler {
 		player.damage(source, Float.MAX_VALUE);
 		//?} else {
 		/*// >=1.21.2：damage 需要显式传入 ServerWorld；此处仅在服务端调用，直接转换当前世界即可。
-		player.damage((ServerWorld) player.getWorld(), source, Float.MAX_VALUE);
+		player.damage((ServerWorld) LifeDebtWorldHelper.getWorld(player), source, Float.MAX_VALUE);
 		*///?}
 	}
 }

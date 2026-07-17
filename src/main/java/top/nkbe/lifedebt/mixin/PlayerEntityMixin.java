@@ -60,7 +60,7 @@ public class PlayerEntityMixin {
 			/*// <1.18：Entity 尚无 getWorld()，使用 getEntityWorld()。
 			if (!player.getEntityWorld().isClient) {
 			*///?} else {
-			if (!player.getWorld().isClient) {
+			if (!top.nkbe.lifedebt.util.LifeDebtWorldHelper.isClient(player)) {
 			//?}
 				triggerLifeDebtEffect(player);
 			}
@@ -111,7 +111,7 @@ public class PlayerEntityMixin {
 		//? if <1.18 {
 		/*World world = player.getEntityWorld();
 		*///?} else {
-		World world = player.getWorld();
+		World world = top.nkbe.lifedebt.util.LifeDebtWorldHelper.getWorld(player);
 		//?}
 		world.playSound(null, player.getX(), player.getY(), player.getZ(),
 				SoundEvents.ITEM_TOTEM_USE, SoundCategory.PLAYERS, 1.0f, 1.0f);

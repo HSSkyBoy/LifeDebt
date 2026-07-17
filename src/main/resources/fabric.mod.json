@@ -3,7 +3,7 @@
 	"id": "lifedebt",
 	"version": "${version}",
 	"name": "Life Debt",
-	"description": "Cheat death by burning your future vitality: eating a Totem of Undying grants a buff that resists lethal damage, but every death you defy is repaid as permanent max-health loss when it ends.",
+	"description": "Borrowing from one’s future life to avoid death now; if the debt cannot be repaid, then be reduced to ashes on the spot.",
 	"authors": [
 		"NkBe"
 	],
@@ -24,7 +24,7 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.19.3",
-		"minecraft": "~${minecraft_version}",
+		"minecraft": "${minecraft_range}",
 		"java": ">=${java_version}",
 		"${fabric_api_id}": "*"
 	}

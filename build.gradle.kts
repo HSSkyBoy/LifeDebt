@@ -68,10 +68,28 @@ tasks.processResources {
 	// Fabric API's aggregate mod id is `fabric` on <1.18 and `fabric-api` from 1.18 onward;
 	// depending on the wrong id makes Fabric Loader reject the mod even when the API is installed.
 	val fabricApiId = if (stonecutter.eval(mcVersion, "<1.18")) "fabric" else "fabric-api"
+	// Each representative build covers a whole API-compatible range, so one jar works across
+	// every Minecraft version in its era. Ranges are contiguous and span 1.16.5–1.21.11.
+	val minecraftRange = when (mcVersion) {
+		"1.16.5"  -> ">=1.16.5 <1.17"
+		"1.17.1"  -> ">=1.17 <1.18"
+		"1.19.2"  -> ">=1.18 <1.19.3"
+		"1.19.3"  -> ">=1.19.3 <1.19.4"
+		"1.20.1"  -> ">=1.19.4 <1.20.2"
+		"1.20.4"  -> ">=1.20.2 <1.20.5"
+		"1.20.6"  -> ">=1.20.5 <1.21"
+		"1.21.1"  -> ">=1.21 <1.21.2"
+		"1.21.4"  -> ">=1.21.2 <1.21.5"
+		"1.21.5"  -> ">=1.21.5 <1.21.6"
+		"1.21.8"  -> ">=1.21.6 <1.21.9"
+		"1.21.11" -> ">=1.21.9 <1.22"
+		else      -> "~$mcVersion"
+	}
 	filesMatching("fabric.mod.json") {
 		expand(
 			"version" to modVersion,
 			"minecraft_version" to mcVersion,
+			"minecraft_range" to minecraftRange,
 			"java_version" to requiredJava.majorVersion,
 			"fabric_api_id" to fabricApiId,
 		)
