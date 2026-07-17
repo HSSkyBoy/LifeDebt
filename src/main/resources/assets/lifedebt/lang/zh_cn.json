@@ -4,6 +4,11 @@
     "advancements.lifedebt.burn_out_body.title": "燃尽此身",
     "advancements.lifedebt.burn_out_body.description": "在无尽的复苏中燃尽了自己。",
     "lifedebt.message.signed": "已签订命债 — 可借命 %1$s 次。",
+    "lifedebt.message.signed_contract": "已签订%1$s — 可借命 %2$s 次。",
     "lifedebt.message.borrowed": "已借命 — 剩余借命：%1$s，债务：%2$s",
+    "lifedebt.contract.blood": "血契",
+    "lifedebt.contract.soul": "魂契",
+    "lifedebt.contract.escape": "亡契",
+    "lifedebt.screen.contract.title": "签订命债契约",
     "death.attack.burn_out": "%1$s燃尽了"
 }

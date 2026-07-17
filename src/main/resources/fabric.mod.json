@@ -17,6 +17,9 @@
 	"entrypoints": {
 		"main": [
 			"top.nkbe.lifedebt.LifeDebt"
+		],
+		"client": [
+			"top.nkbe.lifedebt.client.LifeDebtClient"
 		]
 	},
 	"mixins": [

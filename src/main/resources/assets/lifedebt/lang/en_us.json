@@ -4,6 +4,11 @@
     "advancements.lifedebt.burn_out_body.title": "Consume me!",
     "advancements.lifedebt.burn_out_body.description": "Burned yourself out in endless revival.",
     "lifedebt.message.signed": "Life Debt signed — you may cheat death %1$s more times.",
+    "lifedebt.message.signed_contract": "%1$s signed — you may cheat death %2$s more times.",
     "lifedebt.message.borrowed": "Life borrowed — charges left: %1$s, debt: %2$s",
+    "lifedebt.contract.blood": "Blood Pact",
+    "lifedebt.contract.soul": "Soul Pact",
+    "lifedebt.contract.escape": "Escape Pact",
+    "lifedebt.screen.contract.title": "Sign a Life Debt Contract",
     "death.attack.burn_out": "%1$s burned out"
 }

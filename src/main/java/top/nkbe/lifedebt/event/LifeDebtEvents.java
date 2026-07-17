@@ -2,16 +2,15 @@ package top.nkbe.lifedebt.event;
 
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
 import net.minecraft.util.TypedActionResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import top.nkbe.lifedebt.core.LifeDebtAttachments;
 import top.nkbe.lifedebt.core.LifeDebtData;
 import top.nkbe.lifedebt.core.LifeDebtManager;
+import top.nkbe.lifedebt.net.OpenContractScreenPayload;
 
 /**
  * 命债玩法的事件接线。集中注册，避免把入口逻辑散落在 {@code onInitialize} 里。
@@ -20,11 +19,6 @@ import top.nkbe.lifedebt.core.LifeDebtManager;
  * 在补齐现代节点时再用 Stonecutter 条件注释处理。
  */
 public final class LifeDebtEvents {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger("lifedebt");
-
-	/** 普通命债图腾的默认借命容量。 */
-	private static final int DEFAULT_TOTEM_CHARGE = 3;
 
 	private LifeDebtEvents() {
 	}
@@ -49,8 +43,9 @@ public final class LifeDebtEvents {
 	}
 
 	/**
-	 * 右键不死图腾签订命债：授予借命容量并消耗一枚图腾。
-	 * Alpha 阶段直接签约，契约选择 UI 于 Milestone 2 接入。
+	 * 右键不死图腾时，若玩家尚无借命容量，令客户端打开契约选择界面。
+	 * 实际签约（写入契约、扣图腾）由 {@link top.nkbe.lifedebt.net.LifeDebtNetworking}
+	 * 在收到客户端选择后于服务端权威执行。
 	 */
 	private static void registerTotemSigning() {
 		UseItemCallback.EVENT.register((player, world, hand) -> {
@@ -68,12 +63,7 @@ public final class LifeDebtEvents {
 				return TypedActionResult.pass(stack);
 			}
 
-			data.setTotemCharge(DEFAULT_TOTEM_CHARGE);
-			if (!player.getAbilities().creativeMode) {
-				stack.decrement(1);
-			}
-			serverPlayer.sendMessage(
-					Text.translatable("lifedebt.message.signed", DEFAULT_TOTEM_CHARGE), true);
+			ServerPlayNetworking.send(serverPlayer, new OpenContractScreenPayload());
 			return TypedActionResult.success(stack, false);
 		});
 	}

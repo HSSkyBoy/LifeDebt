@@ -35,4 +35,23 @@ public enum ContractType implements StringIdentifiable {
 	public String asString() {
 		return id;
 	}
+
+	/** 契约显示名的翻译键。 */
+	public String translationKey() {
+		return "lifedebt.contract." + id;
+	}
+
+	/**
+	 * 按字符串 id 解析契约类型；未知 id 归为 {@link #NONE}，便于网络层防御非法输入。
+	 */
+	public static ContractType byId(String id) {
+		if (id != null) {
+			for (ContractType type : values()) {
+				if (type.id.equals(id)) {
+					return type;
+				}
+			}
+		}
+		return NONE;
+	}
 }
