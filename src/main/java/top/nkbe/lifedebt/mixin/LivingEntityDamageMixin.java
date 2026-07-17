@@ -1,9 +1,9 @@
-package com.adoleiiiiii.lifedebt.mixin;
+package top.nkbe.lifedebt.mixin;
 
-import com.adoleiiiiii.lifedebt.damage.LifeDebtDamageTypes;
-import com.adoleiiiiii.lifedebt.effect.ModEffects;
-import com.adoleiiiiii.lifedebt.player.LifeDebtPlayerAccess;
-import com.adoleiiiiii.lifedebt.util.LifeDebtDamageHelper;
+import top.nkbe.lifedebt.damage.LifeDebtDamageTypes;
+import top.nkbe.lifedebt.effect.ModEffects;
+import top.nkbe.lifedebt.player.LifeDebtPlayerAccess;
+import top.nkbe.lifedebt.util.LifeDebtDamageHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;

@@ -1,7 +1,7 @@
-package com.adoleiiiiii.lifedebt.mixin;
+package top.nkbe.lifedebt.mixin;
 
-import com.adoleiiiiii.lifedebt.effect.ModEffects;
-import com.adoleiiiiii.lifedebt.util.LifeDebtPenaltyHandler;
+import top.nkbe.lifedebt.effect.ModEffects;
+import top.nkbe.lifedebt.util.LifeDebtPenaltyHandler;
 import net.minecraft.entity.LivingEntity;
 //? if <1.20.5 {
 import net.minecraft.entity.effect.StatusEffect;

@@ -1,6 +1,6 @@
-package com.adoleiiiiii.lifedebt.damage;
+package top.nkbe.lifedebt.damage;
 
-import com.adoleiiiiii.lifedebt.LifeDebt;
+import top.nkbe.lifedebt.LifeDebt;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;

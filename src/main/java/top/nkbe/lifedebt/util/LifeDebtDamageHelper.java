@@ -1,6 +1,6 @@
-package com.adoleiiiiii.lifedebt.util;
+package top.nkbe.lifedebt.util;
 
-import com.adoleiiiiii.lifedebt.config.LifeDebtConfig;
+import top.nkbe.lifedebt.config.LifeDebtConfig;
 
 /**
  * 不屈效果的伤害减免计算工具。

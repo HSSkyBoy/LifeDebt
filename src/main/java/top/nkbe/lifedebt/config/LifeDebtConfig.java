@@ -1,6 +1,6 @@
-package com.adoleiiiiii.lifedebt.config;
+package top.nkbe.lifedebt.config;
 
-import com.adoleiiiiii.lifedebt.LifeDebt;
+import top.nkbe.lifedebt.LifeDebt;
 import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,7 @@ import java.nio.file.Path;
 /**
  * 不屈效果模组配置（{@code config/lifedebt.yml}）。
  * <p>
- * 公式与调参说明见配置文件内注释；逻辑与 {@link com.adoleiiiiii.lifedebt.util.LifeDebtDamageHelper} 一致。
+ * 公式与调参说明见配置文件内注释；逻辑与 {@link top.nkbe.lifedebt.util.LifeDebtDamageHelper} 一致。
  */
 public final class LifeDebtConfig {
 

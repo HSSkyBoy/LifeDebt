@@ -1,6 +1,6 @@
-package com.adoleiiiiii.lifedebt;
+package top.nkbe.lifedebt;
 
-import com.adoleiiiiii.lifedebt.effect.ModEffects;
+import top.nkbe.lifedebt.effect.ModEffects;
 import net.minecraft.SharedConstants;
 //? if <1.20.5 {
 import net.minecraft.entity.effect.StatusEffectInstance;

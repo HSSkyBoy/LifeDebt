@@ -1,6 +1,6 @@
-package com.adoleiiiiii.lifedebt.util;
+package top.nkbe.lifedebt.util;
 
-import com.adoleiiiiii.lifedebt.player.LifeDebtPlayerAccess;
+import top.nkbe.lifedebt.player.LifeDebtPlayerAccess;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.entity.effect.StatusEffectInstance;

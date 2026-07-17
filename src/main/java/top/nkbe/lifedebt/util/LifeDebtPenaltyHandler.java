@@ -1,8 +1,8 @@
-package com.adoleiiiiii.lifedebt.util;
+package top.nkbe.lifedebt.util;
 
-import com.adoleiiiiii.lifedebt.advancement.ModAdvancements;
-import com.adoleiiiiii.lifedebt.damage.LifeDebtDamageTypes;
-import com.adoleiiiiii.lifedebt.player.LifeDebtPlayerAccess;
+import top.nkbe.lifedebt.advancement.ModAdvancements;
+import top.nkbe.lifedebt.damage.LifeDebtDamageTypes;
+import top.nkbe.lifedebt.player.LifeDebtPlayerAccess;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;

@@ -1,9 +1,9 @@
-package com.adoleiiiiii.lifedebt;
+package top.nkbe.lifedebt;
 
-import com.adoleiiiiii.lifedebt.config.LifeDebtConfig;
-import com.adoleiiiiii.lifedebt.effect.ModEffects;
-import com.adoleiiiiii.lifedebt.mixin.ItemAccessor;
-import com.adoleiiiiii.lifedebt.player.LifeDebtPlayerAccess;
+import top.nkbe.lifedebt.config.LifeDebtConfig;
+import top.nkbe.lifedebt.effect.ModEffects;
+import top.nkbe.lifedebt.mixin.ItemAccessor;
+import top.nkbe.lifedebt.player.LifeDebtPlayerAccess;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 //? if >=1.20.5 {

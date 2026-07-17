@@ -1,4 +1,4 @@
-package com.adoleiiiiii.lifedebt.player;
+package top.nkbe.lifedebt.player;
 
 /**
  * 存储不屈 buff 期间玩家专属状态（死亡计数、生命上限惩罚等）的访问接口。

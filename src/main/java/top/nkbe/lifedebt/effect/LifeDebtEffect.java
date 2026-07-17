@@ -1,6 +1,6 @@
-package com.adoleiiiiii.lifedebt.effect;
+package top.nkbe.lifedebt.effect;
 
-import com.adoleiiiiii.lifedebt.util.LifeDebtPenaltyHandler;
+import top.nkbe.lifedebt.util.LifeDebtPenaltyHandler;
 import net.minecraft.entity.LivingEntity;
 //? if <1.20.5 {
 import net.minecraft.entity.attribute.AttributeContainer;

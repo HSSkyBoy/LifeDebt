@@ -1,11 +1,11 @@
-package com.adoleiiiiii.lifedebt.mixin;
+package top.nkbe.lifedebt.mixin;
 
-import com.adoleiiiiii.lifedebt.LifeDebtConstants;
-import com.adoleiiiiii.lifedebt.effect.ModEffects;
-import com.adoleiiiiii.lifedebt.player.LifeDebtPlayerAccess;
-import com.adoleiiiiii.lifedebt.player.LifeDebtPlayerNbt;
-import com.adoleiiiiii.lifedebt.util.LifeDebtDamageHelper;
-import com.adoleiiiiii.lifedebt.util.LifeDebtPenaltyHandler;
+import top.nkbe.lifedebt.LifeDebtConstants;
+import top.nkbe.lifedebt.effect.ModEffects;
+import top.nkbe.lifedebt.player.LifeDebtPlayerAccess;
+import top.nkbe.lifedebt.player.LifeDebtPlayerNbt;
+import top.nkbe.lifedebt.util.LifeDebtDamageHelper;
+import top.nkbe.lifedebt.util.LifeDebtPenaltyHandler;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
