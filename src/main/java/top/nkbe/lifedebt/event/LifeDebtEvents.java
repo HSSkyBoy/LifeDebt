@@ -7,6 +7,8 @@ import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.TypedActionResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import top.nkbe.lifedebt.core.LifeDebtAttachments;
 import top.nkbe.lifedebt.core.LifeDebtData;
 import top.nkbe.lifedebt.core.LifeDebtManager;
@@ -18,6 +20,8 @@ import top.nkbe.lifedebt.core.LifeDebtManager;
  * 在补齐现代节点时再用 Stonecutter 条件注释处理。
  */
 public final class LifeDebtEvents {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger("lifedebt");
 
 	/** 普通命债图腾的默认借命容量。 */
 	private static final int DEFAULT_TOTEM_CHARGE = 3;

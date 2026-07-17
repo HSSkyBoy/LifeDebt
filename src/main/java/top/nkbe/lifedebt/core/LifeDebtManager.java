@@ -2,6 +2,8 @@ package top.nkbe.lifedebt.core;
 
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 命债系统的死亡处理中枢。所有致命伤的判定都收敛到这里，
@@ -17,6 +19,8 @@ import net.minecraft.text.Text;
  * </pre>
  */
 public final class LifeDebtManager {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger("lifedebt");
 
 	private LifeDebtManager() {
 	}
@@ -44,6 +48,8 @@ public final class LifeDebtManager {
 		// 恢复到存活状态，取消这次死亡。
 		player.setHealth(player.getMaxHealth());
 
+		LOGGER.info("[借命] {} 借命成功：剩余容量={}，债务={}，累计借命={}",
+				player.getName().getString(), data.getTotemCharge(), data.getDebt(), data.getBorrowedLife());
 		notifyBorrow(player, data);
 		return true;
 	}

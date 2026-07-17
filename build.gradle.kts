@@ -85,7 +85,7 @@ tasks.register<Copy>("buildAndCollect") {
 	description = "Builds the mod jar and copies it into the root build/libs/{mod_version}/ directory"
 	dependsOn(tasks.build)
 	from(tasks.remapJar.map { it.archiveFile }, tasks.remapSourcesJar.map { it.archiveFile })
-	into(rootProject.layout.buildDirectory.dir("libs/${property("mod_version")}"))
+	into(rootProject.layout.buildDirectory.dir("libs/${project.property("mod_version")}"))
 }
 
 // configure the maven publication
