@@ -1,6 +1,8 @@
 package top.nkbe.lifedebt.mixin;
 
 import top.nkbe.lifedebt.effect.ModEffects;
+import top.nkbe.lifedebt.core.LifeDebtAttachments;
+import top.nkbe.lifedebt.core.LifeDebtManager;
 import top.nkbe.lifedebt.player.LifeDebtPlayerAccess;
 import top.nkbe.lifedebt.util.LifeDebtEffectHelper;
 import net.minecraft.advancement.criterion.Criteria;
@@ -42,6 +44,20 @@ public class PlayerEntityMixin {
 		LivingEntity entity = (LivingEntity) (Object) this;
 
 		if (!(entity instanceof PlayerEntity player)) {
+			return;
+		}
+
+		// A Totem is an automatic death protector, so right-click interception alone
+		// cannot enforce the contract rule. Unsigned players must die normally.
+		if (player instanceof ServerPlayerEntity && LifeDebtAttachments.get(player).getTotemCharge() <= 0) {
+			cir.setReturnValue(false);
+			cir.cancel();
+			return;
+		}
+		if (player instanceof ServerPlayerEntity serverPlayer
+				&& LifeDebtManager.handleDeath(serverPlayer)) {
+			cir.setReturnValue(true);
+			cir.cancel();
 			return;
 		}
 

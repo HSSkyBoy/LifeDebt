@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "lifedebt:block/debt_altar" }
+  }
+}

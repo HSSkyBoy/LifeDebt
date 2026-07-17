@@ -31,6 +31,7 @@ public final class LifeDebtManager {
 
 	/** 生命上限扣除后的下限，避免归零导致玩家无法存活。 */
 	private static final double MIN_MAX_HEALTH = 2.0;
+	private static final double UNCONTRACTED_MAX_HEALTH = 10.0;
 
 	/**
 	 * 借命生命上限惩罚所用的属性修饰符 ID。与旧 1.x 休眠系统的
@@ -38,6 +39,8 @@ public final class LifeDebtManager {
 	 */
 	private static final Identifier BORROW_PENALTY_ID =
 			Identifier.of("lifedebt", "borrow_max_health_penalty");
+	private static final Identifier UNCONTRACTED_PENALTY_ID =
+			Identifier.of("lifedebt", "uncontracted_max_health_penalty");
 
 	private LifeDebtManager() {
 	}
@@ -81,6 +84,47 @@ public final class LifeDebtManager {
 	 */
 	public static void reapplyMaxHealthPenalty(ServerPlayerEntity player) {
 		applyMaxHealthPenalty(player, LifeDebtAttachments.get(player).getBorrowedLife());
+	}
+
+	/** Applies the pre-contract survival pressure, or removes it after signing. */
+	public static void updateContractPenalty(ServerPlayerEntity player) {
+		EntityAttributeInstance attr = player.getAttributeInstance(
+				//? if >=1.21.2 {
+				/*EntityAttributes.MAX_HEALTH
+				*///?} else {
+				EntityAttributes.GENERIC_MAX_HEALTH
+				//?}
+		);
+		if (attr == null) {
+			return;
+		}
+		attr.removeModifier(UNCONTRACTED_PENALTY_ID);
+		LifeDebtData data = LifeDebtAttachments.get(player);
+		if (data.getContract() == ContractType.NONE) {
+			double penalty = Math.min(attr.getBaseValue() - MIN_MAX_HEALTH,
+					Math.max(0.0, attr.getBaseValue() - UNCONTRACTED_MAX_HEALTH));
+			if (penalty > 0.0) {
+				attr.addPersistentModifier(new EntityAttributeModifier(
+						UNCONTRACTED_PENALTY_ID, -penalty, EntityAttributeModifier.Operation.ADD_VALUE));
+			}
+		}
+		if (player.getHealth() > player.getMaxHealth()) {
+			player.setHealth(player.getMaxHealth());
+		}
+	}
+
+	/** Repays one borrowed life and one point of debt at the altar. */
+	public static void repayOnce(ServerPlayerEntity player) {
+		LifeDebtData data = LifeDebtAttachments.get(player);
+		if (data.getBorrowedLife() <= 0) {
+			player.sendMessage(Text.translatable("lifedebt.message.no_debt"), true);
+			return;
+		}
+
+		data.setBorrowedLife(data.getBorrowedLife() - 1);
+		data.setDebt(data.getDebt() - 1);
+		applyMaxHealthPenalty(player, data.getBorrowedLife());
+		player.sendMessage(Text.translatable("lifedebt.message.repaid", data.getBorrowedLife(), data.getDebt()), true);
 	}
 
 	/**

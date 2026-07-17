@@ -10,5 +10,13 @@
     "lifedebt.contract.soul": "魂契",
     "lifedebt.contract.escape": "亡契",
     "lifedebt.screen.contract.title": "签订命债契约",
-    "death.attack.burn_out": "%1$s燃尽了"
+    "death.attack.burn_out": "%1$s燃尽了",
+    "block.lifedebt.debt_altar": "债务祭坛",
+    "item.lifedebt.debt_voucher": "债券",
+    "lifedebt.message.repaid": "已偿还债务。剩余借命：%1$s；债务：%2$s",
+    "lifedebt.message.repay_need_xp": "使用不死图腾还债需要 %1$s 级经验。",
+    "lifedebt.message.no_debt": "你没有需要偿还的借命。",
+    "lifedebt.message.repay_hint": "手持债券或不死图腾在祭坛上还债。",
+    "entity.lifedebt.debt_collector": "追债者",
+    "lifedebt.message.starter_contract": "你获得了用于首次签约的不死图腾。"
 }

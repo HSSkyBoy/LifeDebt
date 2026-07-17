@@ -17,7 +17,8 @@ public class LifeDebtData {
 			Codec.INT.optionalFieldOf("deathCount", 0).forGetter(d -> d.deathCount),
 			ContractType.CODEC.optionalFieldOf("contract", ContractType.NONE).forGetter(d -> d.contract),
 			Codec.LONG.optionalFieldOf("contractEnd", 0L).forGetter(d -> d.contractEnd),
-			Codec.INT.optionalFieldOf("totemCharge", 0).forGetter(d -> d.totemCharge)
+			Codec.INT.optionalFieldOf("totemCharge", 0).forGetter(d -> d.totemCharge),
+			Codec.BOOL.optionalFieldOf("starterContractGranted", false).forGetter(d -> d.starterContractGranted)
 	).apply(instance, LifeDebtData::new));
 
 	/** 当前债务。 */
@@ -38,18 +39,27 @@ public class LifeDebtData {
 	/** 当前图腾剩余容量（剩余可借命次数）。 */
 	private int totemCharge;
 
+	/** Whether the one-time starter Totem contract has been granted. */
+	private boolean starterContractGranted;
+
 	/** 空数据，供附着系统在玩家首次访问时初始化。 */
 	public LifeDebtData() {
-		this(0, 0, 0, ContractType.NONE, 0L, 0);
+		this(0, 0, 0, ContractType.NONE, 0L, 0, false);
 	}
 
 	public LifeDebtData(int debt, int borrowedLife, int deathCount, ContractType contract, long contractEnd, int totemCharge) {
+		this(debt, borrowedLife, deathCount, contract, contractEnd, totemCharge, false);
+	}
+
+	public LifeDebtData(int debt, int borrowedLife, int deathCount, ContractType contract, long contractEnd, int totemCharge,
+			boolean starterContractGranted) {
 		this.debt = debt;
 		this.borrowedLife = borrowedLife;
 		this.deathCount = deathCount;
 		this.contract = contract;
 		this.contractEnd = contractEnd;
 		this.totemCharge = totemCharge;
+		this.starterContractGranted = starterContractGranted;
 	}
 
 	public int getDebt() {
@@ -104,6 +114,14 @@ public class LifeDebtData {
 
 	public void setTotemCharge(int totemCharge) {
 		this.totemCharge = Math.max(0, totemCharge);
+	}
+
+	public boolean isStarterContractGranted() {
+		return starterContractGranted;
+	}
+
+	public void setStarterContractGranted(boolean starterContractGranted) {
+		this.starterContractGranted = starterContractGranted;
 	}
 
 	/** 当前债务等级，由 {@link #debt} 派生。 */

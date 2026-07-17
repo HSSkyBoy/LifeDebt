@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import top.nkbe.lifedebt.core.ContractType;
 import top.nkbe.lifedebt.core.LifeDebtAttachments;
 import top.nkbe.lifedebt.core.LifeDebtData;
+import top.nkbe.lifedebt.core.LifeDebtManager;
 
 /**
  * 命债签约的网络接线：注册双向载荷，并在服务端处理客户端的签约请求。
@@ -67,6 +68,7 @@ public final class LifeDebtNetworking {
 
 		data.setContract(contract);
 		data.setTotemCharge(DEFAULT_TOTEM_CHARGE);
+		LifeDebtManager.updateContractPenalty(player);
 		if (!player.getAbilities().creativeMode) {
 			player.getStackInHand(hand).decrement(1);
 		}

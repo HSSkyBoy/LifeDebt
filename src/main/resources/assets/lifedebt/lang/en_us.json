@@ -10,5 +10,13 @@
     "lifedebt.contract.soul": "Soul Pact",
     "lifedebt.contract.escape": "Escape Pact",
     "lifedebt.screen.contract.title": "Sign a Life Debt Contract",
-    "death.attack.burn_out": "%1$s burned out"
+    "death.attack.burn_out": "%1$s burned out",
+    "block.lifedebt.debt_altar": "Debt Altar",
+    "item.lifedebt.debt_voucher": "Debt Voucher",
+    "lifedebt.message.repaid": "Debt repaid. Remaining borrowed lives: %1$s; debt: %2$s",
+    "lifedebt.message.repay_need_xp": "You need %1$s experience levels to repay with a Totem.",
+    "lifedebt.message.no_debt": "You have no borrowed life to repay.",
+    "lifedebt.message.repay_hint": "Hold a Debt Voucher or Totem of Undying to repay at the altar.",
+    "entity.lifedebt.debt_collector": "Debt Collector",
+    "lifedebt.message.starter_contract": "A Totem of Undying has been granted for your first contract."
 }

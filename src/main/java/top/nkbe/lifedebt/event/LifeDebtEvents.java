@@ -2,22 +2,30 @@ package top.nkbe.lifedebt.event;
 
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.player.UseItemCallback;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.particle.ParticleTypes;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.text.Text;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.TypedActionResult;
+import top.nkbe.lifedebt.block.ModBlocks;
 import top.nkbe.lifedebt.core.LifeDebtAttachments;
 import top.nkbe.lifedebt.core.LifeDebtData;
 import top.nkbe.lifedebt.core.LifeDebtManager;
+import top.nkbe.lifedebt.core.DebtLevel;
+import top.nkbe.lifedebt.item.ModItems;
+import top.nkbe.lifedebt.entity.DebtCollectorEntity;
+import top.nkbe.lifedebt.entity.ModEntities;
 import top.nkbe.lifedebt.net.OpenContractScreenPayload;
 
-/**
- * 命债玩法的事件接线。集中注册，避免把入口逻辑散落在 {@code onInitialize} 里。
- *
- * <p>本层针对开发主节点 1.21.1 编写；1.21.2+ 的 API 断代（UseItemCallback 返回类型变化）
- * 在补齐现代节点时再用 Stonecutter 条件注释处理。
- */
 public final class LifeDebtEvents {
 
 	private LifeDebtEvents() {
@@ -26,11 +34,13 @@ public final class LifeDebtEvents {
 	public static void register() {
 		registerDeathHook();
 		registerTotemSigning();
+		registerAltarRepay();
+		registerDebtCollectorSpawns();
+		registerStarterContract();
 	}
 
 	/**
-	 * 致命伤拦截：使用 Fabric 内建的 ALLOW_DEATH 钩子（专为图腾式取消死亡设计），
-	 * 无需 mixin。命债一旦介入借命成功，即返回 false 取消这次死亡。
+	 * 致命伤拦截：使用 Fabric 内建的 ALLOW_DEATH 钩子
 	 */
 	private static void registerDeathHook() {
 		ServerLivingEntityEvents.ALLOW_DEATH.register((entity, source, amount) -> {
@@ -65,6 +75,102 @@ public final class LifeDebtEvents {
 
 			ServerPlayNetworking.send(serverPlayer, new OpenContractScreenPayload());
 			return TypedActionResult.success(stack, false);
+		});
+	}
+
+	private static void registerAltarRepay() {
+		UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
+			if (hand != Hand.MAIN_HAND || world.isClient() || !(player instanceof ServerPlayerEntity serverPlayer)
+					|| !world.getBlockState(hitResult.getBlockPos()).isOf(ModBlocks.DEBT_ALTAR)) {
+				return ActionResult.PASS;
+			}
+
+			LifeDebtData data = LifeDebtAttachments.get(serverPlayer);
+			if (data.getBorrowedLife() <= 0) {
+				serverPlayer.sendMessage(net.minecraft.text.Text.translatable("lifedebt.message.no_debt"), true);
+				return ActionResult.SUCCESS;
+			}
+
+			ItemStack payment = ItemStack.EMPTY;
+			if (serverPlayer.getStackInHand(Hand.MAIN_HAND).isOf(ModItems.DEBT_VOUCHER)) {
+				payment = serverPlayer.getStackInHand(Hand.MAIN_HAND);
+			} else if (serverPlayer.getStackInHand(Hand.OFF_HAND).isOf(ModItems.DEBT_VOUCHER)) {
+				payment = serverPlayer.getStackInHand(Hand.OFF_HAND);
+			}
+
+			if (!payment.isEmpty()) {
+				payment.decrement(1);
+				LifeDebtManager.repayOnce(serverPlayer);
+				return ActionResult.SUCCESS;
+			}
+
+			Hand totemHand = null;
+			if (serverPlayer.getStackInHand(Hand.MAIN_HAND).isOf(Items.TOTEM_OF_UNDYING)) {
+				totemHand = Hand.MAIN_HAND;
+			} else if (serverPlayer.getStackInHand(Hand.OFF_HAND).isOf(Items.TOTEM_OF_UNDYING)) {
+				totemHand = Hand.OFF_HAND;
+			}
+			int cost = data.getLevel().threshold;
+			if (totemHand == null) {
+				serverPlayer.sendMessage(net.minecraft.text.Text.translatable("lifedebt.message.repay_hint"), true);
+				return ActionResult.SUCCESS;
+			}
+			if (serverPlayer.experienceLevel < cost) {
+				serverPlayer.sendMessage(net.minecraft.text.Text.translatable("lifedebt.message.repay_need_xp", cost), true);
+				return ActionResult.SUCCESS;
+			}
+			serverPlayer.addExperienceLevels(-cost);
+			serverPlayer.getStackInHand(totemHand).decrement(1);
+			LifeDebtManager.repayOnce(serverPlayer);
+			return ActionResult.SUCCESS;
+		});
+	}
+
+	private static void registerDebtCollectorSpawns() {
+		ServerTickEvents.END_WORLD_TICK.register(world -> {
+			if (!world.isNight()) {
+				return;
+			}
+			for (ServerPlayerEntity player : world.getPlayers()) {
+				int debt = LifeDebtAttachments.get(player).getDebt();
+				if (debt >= DebtLevel.BORROWER.threshold && world.getTime() % 20L == 0L) {
+					world.spawnParticles(ParticleTypes.SOUL, player.getX(), player.getY() + 1.0, player.getZ(),
+							2, 0.25, 0.5, 0.25, 0.01);
+				}
+				if (debt < DebtLevel.DEBTOR.threshold || world.getRandom().nextInt(1200) != 0) {
+					continue;
+				}
+				Box nearby = player.getBoundingBox().expand(32.0);
+				if (world.getEntitiesByClass(DebtCollectorEntity.class, nearby, entity -> true).size() >= 2) {
+					continue;
+				}
+				int x = player.getBlockPos().getX() + world.getRandom().nextInt(17) - 8;
+				int z = player.getBlockPos().getZ() + world.getRandom().nextInt(17) - 8;
+				int y = world.getTopY(net.minecraft.world.Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, x, z);
+				BlockPos spawnPos = new BlockPos(x, y, z);
+				if (!world.getBlockState(spawnPos).isAir() || !world.getBlockState(spawnPos.up()).isAir()) {
+					continue;
+				}
+				DebtCollectorEntity collector = ModEntities.DEBT_COLLECTOR.create(world);
+				if (collector != null) {
+					collector.refreshPositionAndAngles(x + 0.5, y, z + 0.5, world.getRandom().nextFloat() * 360.0f, 0.0f);
+					world.spawnEntity(collector);
+				}
+			}
+		});
+	}
+
+	private static void registerStarterContract() {
+		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
+			ServerPlayerEntity player = handler.getPlayer();
+			LifeDebtData data = LifeDebtAttachments.get(player);
+			if (data.isStarterContractGranted()) {
+				return;
+			}
+			player.giveItemStack(new ItemStack(Items.TOTEM_OF_UNDYING));
+			data.setStarterContractGranted(true);
+			LifeDebtManager.updateContractPenalty(player);
+			player.sendMessage(Text.translatable("lifedebt.message.starter_contract"), true);
 		});
 	}
 }
