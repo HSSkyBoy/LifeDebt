@@ -89,7 +89,14 @@ public final class LifeDebtManager {
 	 * 每次借命重算，避免叠加多个修饰符导致状态难以追踪。
 	 */
 	private static void applyMaxHealthPenalty(ServerPlayerEntity player, int borrowedLife) {
-		EntityAttributeInstance attr = player.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH);
+		// 1.21.2 起 GENERIC_MAX_HEALTH 更名为 MAX_HEALTH。
+		EntityAttributeInstance attr = player.getAttributeInstance(
+				//? if >=1.21.2 {
+				/*EntityAttributes.MAX_HEALTH
+				*///?} else {
+				EntityAttributes.GENERIC_MAX_HEALTH
+				//?}
+		);
 		if (attr == null) {
 			return;
 		}

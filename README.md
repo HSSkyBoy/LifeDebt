@@ -66,14 +66,12 @@
 
 ## 支持的版本
 
-单一源码，通过 [Stonecutter](https://stonecutter.kikugie.dev/) 为每个 Minecraft 版本各产出一个 jar。
+本模组仅面向 **1.21.x**，通过 [Stonecutter](https://stonecutter.kikugie.dev/) 为每个版本各产出一个 jar。
 
 - **当前开发主节点：`1.21.1`**——新核心层在此编写并验证。
-- 其他现代节点（`1.21.4` / `1.21.8` 等）因 **1.21.2+ 的 API 断代**（如 `UseItemCallback` 返回类型变化）尚在移植，会用 Stonecutter 条件注释逐版补齐。
+- 其他 1.21.x 节点（`1.21.4` / `1.21.8` / `1.21.11`）因 **1.21.2+ 的 API 断代**（如 `UseItemCallback` 返回类型变化、`GENERIC_MAX_HEALTH` 更名）尚在移植，会用 Stonecutter 条件注释逐版补齐。
 
-> 26.x 因改动较大，暂缓，后续再评估。
-
-加载器：Fabric Loader `>=0.19.3`（全版本通用）。需要 Fabric API。
+加载器：Fabric Loader `>=0.19.3`。需要 Fabric API。
 
 ## 许可
 

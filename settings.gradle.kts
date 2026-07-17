@@ -18,10 +18,10 @@ plugins {
 
 stonecutter {
 	create(rootProject) {
-		versions("1.20.5", "1.20.6", "1.21.1", "1.21.4", "1.21.8", "1.21.11")
+		versions("1.21.1", "1.21.4", "1.21.8", "1.21.11")
 		// The current stable node is the development baseline. Older nodes only receive
 		// compatibility fixes; new mechanics are authored against this modern API surface.
-		vcsVersion = "1.21.8"
+		vcsVersion = "1.21.1"
 	}
 }
 
