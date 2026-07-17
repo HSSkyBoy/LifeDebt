@@ -19,6 +19,7 @@
     "lifedebt.message.repay_hint": "Hold a Debt Voucher or Totem of Undying to repay at the altar.",
     "entity.lifedebt.debt_collector": "Debt Collector",
     "lifedebt.message.starter_contract": "A Totem of Undying has been granted for your first contract.",
+    "lifedebt.message.sign_reminder": "Right-click a Totem of Undying to sign a contract and lift the 5-heart penalty.",
     "lifedebt.message.soul_pay": "Soul Pact: paid %1$s experience levels to soften the cost of death.",
     "lifedebt.message.soul_poor": "Soul Pact: not enough experience to soften the cost of borrowing.",
     "lifedebt.message.escape": "Escape Pact: you blinked away, but the Debt Collectors drew nearer.",

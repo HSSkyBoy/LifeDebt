@@ -11,16 +11,16 @@ public enum DebtLevel {
 	NORMAL(0),
 
 	/** 借命者：出现粒子效果。 */
-	BORROWER(5),
+	BORROWER(2),
 
 	/** 负债者：夜晚生成追债者。 */
-	DEBTOR(10),
+	DEBTOR(5),
 
 	/** 亡命者：世界出现异常（村民涨价等）。 */
-	FUGITIVE(20),
+	FUGITIVE(7),
 
 	/** 死人未亡：触发终极世界事件。 */
-	DEAD_NOT_GONE(50);
+	DEAD_NOT_GONE(10);
 
 	/** 进入该等级所需的最低债务值。 */
 	public final int threshold;

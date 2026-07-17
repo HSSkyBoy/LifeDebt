@@ -40,6 +40,24 @@ public final class LifeDebtEvents {
 		registerStarterContract();
 		registerContractEffects();
 		registerHudSync();
+		registerSignReminder();
+	}
+
+	/**
+	 * 未签约玩家会被压到 5 颗心（{@link LifeDebtManager#updateContractPenalty}），
+	 * 这里每 10 秒在 actionbar 提醒其手持不死图腾右键签约以解除压制。
+	 */
+	private static void registerSignReminder() {
+		ServerTickEvents.END_SERVER_TICK.register(server -> {
+			if (server.getTicks() % 200 != 0) {
+				return;
+			}
+			for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+				if (LifeDebtAttachments.get(player).getContract() == top.nkbe.lifedebt.core.ContractType.NONE) {
+					player.sendMessage(Text.translatable("lifedebt.message.sign_reminder"), true);
+				}
+			}
+		});
 	}
 
 	/**
@@ -85,11 +103,6 @@ public final class LifeDebtEvents {
 		});
 	}
 
-	/**
-	 * 右键不死图腾时，若玩家尚无借命容量，令客户端打开契约选择界面。
-	 * 实际签约（写入契约、扣图腾）由 {@link top.nkbe.lifedebt.net.LifeDebtNetworking}
-	 * 在收到客户端选择后于服务端权威执行。
-	 */
 	private static void registerTotemSigning() {
 		UseItemCallback.EVENT.register((player, world, hand) -> {
 			ItemStack stack = player.getStackInHand(hand);
@@ -119,7 +132,7 @@ public final class LifeDebtEvents {
 			}
 
 			LifeDebtData data = LifeDebtAttachments.get(serverPlayer);
-			if (data.getBorrowedLife() <= 0) {
+			if (data.getDebt() <= 0) {
 				serverPlayer.sendMessage(net.minecraft.text.Text.translatable("lifedebt.message.no_debt"), true);
 				return ActionResult.SUCCESS;
 			}

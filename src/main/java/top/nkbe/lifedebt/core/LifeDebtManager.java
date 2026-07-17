@@ -116,15 +116,20 @@ public final class LifeDebtManager {
 		}
 	}
 
-	/** Repays one borrowed life and one point of debt at the altar. */
+	/**
+	 * 在祭坛还一点债务。以债务值为准——契约额外加的债（不增借命次数）也应能还清。
+	 * 借命次数只在其 &gt; 0 时才一并递减，从而逐步解除生命上限惩罚。
+	 */
 	public static void repayOnce(ServerPlayerEntity player) {
 		LifeDebtData data = LifeDebtAttachments.get(player);
-		if (data.getBorrowedLife() <= 0) {
+		if (data.getDebt() <= 0) {
 			player.sendMessage(Text.translatable("lifedebt.message.no_debt"), true);
 			return;
 		}
 
-		data.setBorrowedLife(data.getBorrowedLife() - 1);
+		if (data.getBorrowedLife() > 0) {
+			data.setBorrowedLife(data.getBorrowedLife() - 1);
+		}
 		data.setDebt(data.getDebt() - 1);
 		applyMaxHealthPenalty(player, data.getBorrowedLife());
 		player.sendMessage(Text.translatable("lifedebt.message.repaid", data.getBorrowedLife(), data.getDebt()), true);

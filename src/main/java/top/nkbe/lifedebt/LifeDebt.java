@@ -8,6 +8,7 @@ import top.nkbe.lifedebt.event.LifeDebtEvents;
 import top.nkbe.lifedebt.block.ModBlocks;
 import top.nkbe.lifedebt.item.ModItems;
 import top.nkbe.lifedebt.entity.ModEntities;
+import top.nkbe.lifedebt.command.LifeDebtCommands;
 import top.nkbe.lifedebt.net.LifeDebtNetworking;
 import top.nkbe.lifedebt.player.LifeDebtPlayerAccess;
 import net.fabricmc.api.ModInitializer;
@@ -28,6 +29,7 @@ public class LifeDebt implements ModInitializer {
 		LifeDebtNetworking.registerPayloads();
 		LifeDebtNetworking.registerServerReceivers();
 		LifeDebtEvents.register();
+		LifeDebtCommands.register();
 
 		ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
 			// 旧版重生清理逻辑
