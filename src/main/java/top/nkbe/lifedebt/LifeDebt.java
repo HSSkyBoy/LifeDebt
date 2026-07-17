@@ -2,6 +2,7 @@ package top.nkbe.lifedebt;
 
 import top.nkbe.lifedebt.config.LifeDebtConfig;
 import top.nkbe.lifedebt.core.LifeDebtAttachments;
+import top.nkbe.lifedebt.core.LifeDebtManager;
 import top.nkbe.lifedebt.effect.ModEffects;
 import top.nkbe.lifedebt.event.LifeDebtEvents;
 import top.nkbe.lifedebt.net.LifeDebtNetworking;
@@ -22,13 +23,16 @@ public class LifeDebt implements ModInitializer {
 		LifeDebtNetworking.registerServerReceivers();
 		LifeDebtEvents.register();
 
-		// 旧版重生清理逻辑，保留以兼容尚未移除的 1.x 效果系统（当前处于休眠状态）。
 		ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
+			// 旧版重生清理逻辑
 			if (newPlayer instanceof LifeDebtPlayerAccess access) {
 				access.lifedebt$clearMaxHealthPenalty();
 				access.lifedebt$setBuffSessionActive(false);
 				access.lifedebt$setEffectEndSettled(false);
 			}
+
+			// 「债」跨死亡
+			LifeDebtManager.reapplyMaxHealthPenalty(newPlayer);
 		});
 	}
 }

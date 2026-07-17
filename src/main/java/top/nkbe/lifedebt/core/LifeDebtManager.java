@@ -76,6 +76,14 @@ public final class LifeDebtManager {
 	}
 
 	/**
+	 * 依玩家当前累计借命次数重新施加生命上限惩罚。用于重生后让「债」跨死亡继续生效——
+	 * 真死复活会重置玩家属性，而借命次数走 attachment 持久化保留，故需在重生后重新套用。
+	 */
+	public static void reapplyMaxHealthPenalty(ServerPlayerEntity player) {
+		applyMaxHealthPenalty(player, LifeDebtAttachments.get(player).getBorrowedLife());
+	}
+
+	/**
 	 * 依累计借命次数设置生命上限惩罚：惩罚总量 = 借命次数 × {@value #MAX_HEALTH_PENALTY_PER_BORROW}，
 	 * 并夹取使生命上限不低于 {@value #MIN_MAX_HEALTH}。用单一可替换的修饰符表示当前总惩罚，
 	 * 每次借命重算，避免叠加多个修饰符导致状态难以追踪。
@@ -96,6 +104,11 @@ public final class LifeDebtManager {
 
 		attr.addPersistentModifier(new EntityAttributeModifier(
 				BORROW_PENALTY_ID, -penalty, EntityAttributeModifier.Operation.ADD_VALUE));
+
+		// 重生等场景下当前血量可能高于压低后的上限，夹取避免出现「血条超格」。
+		if (player.getHealth() > player.getMaxHealth()) {
+			player.setHealth(player.getMaxHealth());
+		}
 	}
 
 	/** 向玩家显示当前借命状态（actionbar）。 */
