@@ -17,6 +17,7 @@ import net.minecraft.text.Text;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.TypedActionResult;
 import top.nkbe.lifedebt.block.ModBlocks;
+import top.nkbe.lifedebt.core.ContractEffects;
 import top.nkbe.lifedebt.core.LifeDebtAttachments;
 import top.nkbe.lifedebt.core.LifeDebtData;
 import top.nkbe.lifedebt.core.LifeDebtManager;
@@ -37,6 +38,38 @@ public final class LifeDebtEvents {
 		registerAltarRepay();
 		registerDebtCollectorSpawns();
 		registerStarterContract();
+		registerContractEffects();
+		registerHudSync();
+	}
+
+	/**
+	 * 周期性把命债状态同步给各在线玩家，驱动客户端 HUD。
+	 * 每 20 tick（约 1 秒）一次——HUD 只需大致实时，签约/借命的即时反馈另有 actionbar。
+	 */
+	private static void registerHudSync() {
+		ServerTickEvents.END_SERVER_TICK.register(server -> {
+			if (server.getTicks() % 20 != 0) {
+				return;
+			}
+			for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+				top.nkbe.lifedebt.net.LifeDebtNetworking.syncState(player);
+			}
+		});
+	}
+
+	/**
+	 * 契约效果周期刷新：血契等玩法效果依当前状态（血量/契约）实时重算。
+	 * 每 5 tick 刷新一次，兼顾响应与开销。
+	 */
+	private static void registerContractEffects() {
+		ServerTickEvents.END_SERVER_TICK.register(server -> {
+			if (server.getTicks() % 5 != 0) {
+				return;
+			}
+			for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+				ContractEffects.tick(player);
+			}
+		});
 	}
 
 	/**

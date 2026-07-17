@@ -21,5 +21,6 @@ public final class LifeDebtClient implements ClientModInitializer {
 		ClientPlayNetworking.registerGlobalReceiver(OpenContractScreenPayload.ID,
 				(payload, context) -> context.client().execute(
 						() -> context.client().setScreen(new ContractSelectScreen())));
+		LifeDebtHud.register();
 	}
 }

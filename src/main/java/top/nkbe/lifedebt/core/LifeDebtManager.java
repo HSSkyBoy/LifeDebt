@@ -71,6 +71,9 @@ public final class LifeDebtManager {
 		// 恢复到（已压低的）存活状态，取消这次死亡。
 		player.setHealth(player.getMaxHealth());
 
+		// 借命瞬间触发当前契约的一次性效果（血契加债 / 魂契付经验减损 / 亡契瞬移无敌）。
+		ContractEffects.onBorrow(player, data);
+
 		LOGGER.info("[借命] {} 借命成功：剩余容量={}，债务={}，累计借命={}，生命上限={}",
 				player.getName().getString(), data.getTotemCharge(), data.getDebt(),
 				data.getBorrowedLife(), player.getMaxHealth());

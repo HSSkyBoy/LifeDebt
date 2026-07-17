@@ -29,6 +29,11 @@ public enum DebtLevel {
 		this.threshold = threshold;
 	}
 
+	/** 债务等级显示名的翻译键，如 {@code lifedebt.level.borrower}。 */
+	public String translationKey() {
+		return "lifedebt.level." + name().toLowerCase(java.util.Locale.ROOT);
+	}
+
 	/**
 	 * 根据当前债务值推导债务等级。等级为派生值，不单独持久化，避免与 debt 失去同步。
 	 */

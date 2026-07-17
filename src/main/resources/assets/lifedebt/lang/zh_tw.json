@@ -18,5 +18,15 @@
     "lifedebt.message.no_debt": "你沒有需要償還的借命。",
     "lifedebt.message.repay_hint": "手持債券或不死圖騰在祭壇上還債。",
     "entity.lifedebt.debt_collector": "追債者",
-    "lifedebt.message.starter_contract": "你獲得了用於首次簽約的不死圖騰。"
+    "lifedebt.message.starter_contract": "你獲得了用於首次簽約的不死圖騰。",
+    "lifedebt.message.soul_pay": "魂契：支付 %1$s 級經驗，減輕了死亡代價。",
+    "lifedebt.message.soul_poor": "魂契：經驗不足，借命代價未能減輕。",
+    "lifedebt.message.escape": "亡契：你瞬移脫身，但追債者被引得更近了。",
+    "lifedebt.hud.charge": "借命容量：%1$s",
+    "lifedebt.hud.debt": "債務：%1$s（%2$s）",
+    "lifedebt.level.normal": "正常",
+    "lifedebt.level.borrower": "借命者",
+    "lifedebt.level.debtor": "負債者",
+    "lifedebt.level.fugitive": "亡命者",
+    "lifedebt.level.dead_not_gone": "死人未亡"
 }

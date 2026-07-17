@@ -31,7 +31,16 @@ public final class LifeDebtNetworking {
 	/** 注册载荷类型（客户端与服务端都必须调用，故放在通用初始化里）。 */
 	public static void registerPayloads() {
 		PayloadTypeRegistry.playS2C().register(OpenContractScreenPayload.ID, OpenContractScreenPayload.CODEC);
+		PayloadTypeRegistry.playS2C().register(LifeDebtStatePayload.ID, LifeDebtStatePayload.CODEC);
 		PayloadTypeRegistry.playC2S().register(SignContractPayload.ID, SignContractPayload.CODEC);
+	}
+
+	/** 把玩家当前命债状态推给其客户端，供 HUD 显示。 */
+	public static void syncState(ServerPlayerEntity player) {
+		LifeDebtData data = LifeDebtAttachments.get(player);
+		ServerPlayNetworking.send(player, new LifeDebtStatePayload(
+				data.getDebt(), data.getTotemCharge(), data.getBorrowedLife(),
+				data.getContract().asString()));
 	}
 
 	/** 注册服务端接收器：处理客户端提交的签约选择。 */
