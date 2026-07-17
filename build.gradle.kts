@@ -20,8 +20,8 @@ val requiredJava: JavaVersion = when {
 
 loom {
 	// No splitEnvironmentSourceSets(): it requires a bundled server jar (MC 1.18+) and
-	// breaks configuration on 1.14-1.17. The mod has no client-only code, so a single
-	// merged `main` source set works across the whole 1.14.4-1.21.8 range.
+	// breaks configuration on 1.16.5-1.17. The mod has no client-only code, so a single
+	// merged `main` source set works across the whole 1.16.5-1.21.8 range.
 	mods {
 		create("lifedebt") {
 			sourceSet(sourceSets["main"])
@@ -57,16 +57,23 @@ tasks.withType<JavaCompile>().configureEach {
 }
 
 val modVersion = version.toString()
+// Resolved at project scope: inside the buildAndCollect Copy lambda the receiver is the task,
+// so a bare property("mod_version") there resolves against the task and fails.
+val modVersionRaw = property("mod_version") as String
 val mixinJavaLevel = "JAVA_${requiredJava.majorVersion}"
 tasks.processResources {
 	inputs.property("version", modVersion)
 	inputs.property("minecraft_version", mcVersion)
 
+	// Fabric API's aggregate mod id is `fabric` on <1.18 and `fabric-api` from 1.18 onward;
+	// depending on the wrong id makes Fabric Loader reject the mod even when the API is installed.
+	val fabricApiId = if (stonecutter.eval(mcVersion, "<1.18")) "fabric" else "fabric-api"
 	filesMatching("fabric.mod.json") {
 		expand(
 			"version" to modVersion,
 			"minecraft_version" to mcVersion,
 			"java_version" to requiredJava.majorVersion,
+			"fabric_api_id" to fabricApiId,
 		)
 	}
 
@@ -76,6 +83,19 @@ tasks.processResources {
 	inputs.property("mixinJavaLevel", mixinJavaLevel)
 	filesMatching("lifedebt.mixins.json") {
 		filter { line -> line.replace("\"JAVA_17\"", "\"$mixinJavaLevel\"") }
+	}
+
+	// 1.21 (24w21a) singularized data pack sub-folders: `advancements` -> `advancement`.
+	// A single source file lives under `data/*/advancements/`; relocate it at resource-processing
+	// time for >=1.21 so the advancement actually loads on those versions.
+	inputs.property("singularAdvancementFolder", stonecutter.eval(mcVersion, ">=1.21"))
+	if (stonecutter.eval(mcVersion, ">=1.21")) {
+		filesMatching("data/**/advancements/**") {
+			relativePath = org.gradle.api.file.RelativePath(
+				true,
+				*relativePath.segments.map { if (it == "advancements") "advancement" else it }.toTypedArray()
+			)
+		}
 	}
 }
 
@@ -93,7 +113,7 @@ tasks.register<Copy>("buildAndCollect") {
 	description = "Builds the mod jar and copies it into the root build/libs/{mod_version}/ directory"
 	dependsOn(tasks.build)
 	from(tasks.remapJar.map { it.archiveFile }, tasks.remapSourcesJar.map { it.archiveFile })
-	into(rootProject.layout.buildDirectory.dir("libs/${property("mod_version")}"))
+	into(rootProject.layout.buildDirectory.dir("libs/$modVersionRaw"))
 }
 
 // configure the maven publication

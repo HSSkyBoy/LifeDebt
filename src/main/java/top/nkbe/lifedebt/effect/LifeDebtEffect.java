@@ -2,7 +2,7 @@ package top.nkbe.lifedebt.effect;
 
 import top.nkbe.lifedebt.util.LifeDebtPenaltyHandler;
 import net.minecraft.entity.LivingEntity;
-//? if <1.20.5 {
+//? if <1.20.2 {
 import net.minecraft.entity.attribute.AttributeContainer;
 //?}
 import net.minecraft.entity.effect.StatusEffect;
@@ -55,7 +55,7 @@ public class LifeDebtEffect extends StatusEffect {
 	}
 	*///?}
 
-	//? if <1.20.5 {
+	//? if <1.20.2 {
 	@Override
 	public void onApplied(LivingEntity entity, AttributeContainer attributes, int amplifier) {
 		super.onApplied(entity, attributes, amplifier);
@@ -86,7 +86,8 @@ public class LifeDebtEffect extends StatusEffect {
 		}
 	}
 
-	// >=1.20.5 的 StatusEffect 不再提供带 LivingEntity 的 onRemoved 钩子（仅剩 onRemoved(AttributeContainer)），
-	// 效果结束结算改由 LivingEntityRemoveEffectMixin 注入 LivingEntity#onStatusEffectRemoved 完成。
+	// >=1.20.2 的 StatusEffect 不再提供带 LivingEntity 的 onRemoved 钩子（仅剩 onRemoved(AttributeContainer)），
+	// 且 onApplied 去掉了 AttributeContainer 参数；效果结束结算改由 LivingEntityRemoveEffectMixin
+	// 注入 LivingEntity#onStatusEffectRemoved 完成。
 	*///?}
 }

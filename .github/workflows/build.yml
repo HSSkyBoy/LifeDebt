@@ -1,6 +1,6 @@
 # Build every Minecraft version of the mod (via Stonecutter's chiseledBuild) on
 # every push and pull request. Catches version-specific compile/mixin breakage
-# across the whole 1.14.4-1.21.8 range.
+# across the whole 1.16.5-1.21.8 range.
 
 name: Build
 on: [pull_request, push]

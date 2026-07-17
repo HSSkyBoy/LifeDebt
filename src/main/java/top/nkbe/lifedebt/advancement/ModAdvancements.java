@@ -3,8 +3,9 @@ package top.nkbe.lifedebt.advancement;
 import top.nkbe.lifedebt.LifeDebt;
 //? if <1.20.2 {
 import net.minecraft.advancement.Advancement;
-//?} else
-/*import net.minecraft.advancement.AdvancementEntry;*/
+//?} else {
+/*import net.minecraft.advancement.AdvancementEntry;
+*///?}
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
@@ -37,8 +38,9 @@ public final class ModAdvancements {
 		MinecraftServer server = Objects.requireNonNull(player.getServer());
 		//? if <1.20.2 {
 		Advancement advancement = server.getAdvancementLoader().get(BURN_OUT_BODY);
-		//?} else
-		/*AdvancementEntry advancement = server.getAdvancementLoader().get(BURN_OUT_BODY);*/
+		//?} else {
+		/*AdvancementEntry advancement = server.getAdvancementLoader().get(BURN_OUT_BODY);
+		*///?}
 		if (advancement != null) {
 			player.getAdvancementTracker().grantCriterion(advancement, BURN_OUT_BODY_CRITERION);
 		}

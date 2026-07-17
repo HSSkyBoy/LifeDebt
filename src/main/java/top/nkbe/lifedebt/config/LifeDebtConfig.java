@@ -2,8 +2,14 @@ package top.nkbe.lifedebt.config;
 
 import top.nkbe.lifedebt.LifeDebt;
 import net.fabricmc.loader.api.FabricLoader;
+//? if <1.17 {
+/*// <1.17：Minecraft 尚未迁移到 SLF4J，日志门面为 Log4j2。
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+*///?} else {
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+//?}
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,7 +24,11 @@ import java.nio.file.Path;
  */
 public final class LifeDebtConfig {
 
+	//? if <1.17 {
+	/*private static final Logger LOGGER = LogManager.getLogger(LifeDebt.MOD_ID);
+	*///?} else {
 	private static final Logger LOGGER = LoggerFactory.getLogger(LifeDebt.MOD_ID);
+	//?}
 	private static final Path CONFIG_PATH =
 			FabricLoader.getInstance().getConfigDir().resolve("lifedebt.yml");
 	private static final String DEFAULT_CONFIG_RESOURCE = "/lifedebt-default.yml";
@@ -46,7 +56,8 @@ public final class LifeDebtConfig {
 		}
 
 		try {
-			String content = Files.readString(CONFIG_PATH, StandardCharsets.UTF_8);
+			// Files.readString 是 Java 11 API；1.14/1.16.5 以 Java 8 编译，改用 readAllBytes 兼容全版本。
+			String content = new String(Files.readAllBytes(CONFIG_PATH), StandardCharsets.UTF_8);
 			damageReductionK = parseDamageReductionK(content);
 			validate();
 			LOGGER.info("Loaded config: damageReductionK={}", damageReductionK);
