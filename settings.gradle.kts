@@ -12,19 +12,16 @@ plugins {
 	// https://stonecutter.kikugie.dev/
 	// NOTE: Stonecutter 0.8+ hard-requires Gradle 9; 0.7.x is the newest line that runs on Gradle 8.14.4.
 	id("dev.kikugie.stonecutter") version "0.7.11"
-	// Auto-provisions the JDKs required by the per-version Java toolchains (8/16/17/21)
+	// Auto-provisions the single Java 21 toolchain used by every supported version.
 	id("org.gradle.toolchains.foojay-resolver-convention") version "0.10.0"
 }
 
 stonecutter {
 	create(rootProject) {
-		versions(
-			"1.14.4", "1.16.5", "1.17.1", "1.18.2",
-			"1.19.2", "1.19.4", "1.20.1", "1.20.4",
-			"1.20.6", "1.21.1", "1.21.4", "1.21.8"
-		)
-		// The version committed to VCS; also the active development version.
-		vcsVersion = "1.20.1"
+		versions("1.20.5", "1.20.6", "1.21.1", "1.21.4", "1.21.8", "1.21.11")
+		// The current stable node is the development baseline. Older nodes only receive
+		// compatibility fixes; new mechanics are authored against this modern API surface.
+		vcsVersion = "1.21.8"
 	}
 }
 

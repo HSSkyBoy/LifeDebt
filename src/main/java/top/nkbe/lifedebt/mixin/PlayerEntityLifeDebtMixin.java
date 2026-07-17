@@ -207,13 +207,13 @@ public abstract class PlayerEntityLifeDebtMixin implements LifeDebtPlayerAccess 
 		}
 		lifedebt$clearMaxHealthPenalty();
 		//? if <1.20.5 {
-		maxHealth.addPersistentModifier(new EntityAttributeModifier(
+		/*maxHealth.addPersistentModifier(new EntityAttributeModifier(
 				LifeDebtConstants.MAX_HEALTH_PENALTY_MODIFIER_ID,
 				"lifedebt_max_health_penalty",
 				-penalty,
 				EntityAttributeModifier.Operation.ADDITION
 		));
-		//?} elif <1.21 {
+		*///?} elif <1.21 {
 		/*maxHealth.addPersistentModifier(new EntityAttributeModifier(
 				LifeDebtConstants.MAX_HEALTH_PENALTY_MODIFIER_ID,
 				"lifedebt_max_health_penalty",
@@ -221,12 +221,12 @@ public abstract class PlayerEntityLifeDebtMixin implements LifeDebtPlayerAccess 
 				EntityAttributeModifier.Operation.ADD_VALUE
 		));
 		*///?} else {
-		/*maxHealth.addPersistentModifier(new EntityAttributeModifier(
+		maxHealth.addPersistentModifier(new EntityAttributeModifier(
 				LifeDebtConstants.MAX_HEALTH_PENALTY_MODIFIER_ID,
 				-penalty,
 				EntityAttributeModifier.Operation.ADD_VALUE
 		));
-		*///?}
+		//?}
 	}
 
 	@Override
@@ -271,13 +271,13 @@ public abstract class PlayerEntityLifeDebtMixin implements LifeDebtPlayerAccess 
 		}
 
 		//? if <1.20.5 {
-		knockbackResistance.addTemporaryModifier(new EntityAttributeModifier(
+		/*knockbackResistance.addTemporaryModifier(new EntityAttributeModifier(
 				LifeDebtConstants.KNOCKBACK_RESISTANCE_MODIFIER_ID,
 				"lifedebt_knockback_resistance",
 				resistance,
 				EntityAttributeModifier.Operation.ADDITION
 		));
-		//?} elif <1.21 {
+		*///?} elif <1.21 {
 		/*knockbackResistance.addTemporaryModifier(new EntityAttributeModifier(
 				LifeDebtConstants.KNOCKBACK_RESISTANCE_MODIFIER_ID,
 				"lifedebt_knockback_resistance",
@@ -285,12 +285,12 @@ public abstract class PlayerEntityLifeDebtMixin implements LifeDebtPlayerAccess 
 				EntityAttributeModifier.Operation.ADD_VALUE
 		));
 		*///?} else {
-		/*knockbackResistance.addTemporaryModifier(new EntityAttributeModifier(
+		knockbackResistance.addTemporaryModifier(new EntityAttributeModifier(
 				LifeDebtConstants.KNOCKBACK_RESISTANCE_MODIFIER_ID,
 				resistance,
 				EntityAttributeModifier.Operation.ADD_VALUE
 		));
-		*///?}
+		//?}
 	}
 
 	/**

@@ -3,12 +3,12 @@ package top.nkbe.lifedebt;
 import top.nkbe.lifedebt.effect.ModEffects;
 import net.minecraft.SharedConstants;
 //? if <1.20.5 {
-import net.minecraft.entity.effect.StatusEffectInstance;
+/*import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.FoodComponent;
-//?} elif <1.21.2 {
-/*import net.minecraft.component.type.FoodComponent;
+*///?} elif <1.21.2 {
+import net.minecraft.component.type.FoodComponent;
 import net.minecraft.entity.effect.StatusEffectInstance;
-*///?} else {
+//?} else {
 /*// >=1.21.2：进食效果从 FoodComponent 拆分到 CONSUMABLE 组件（ConsumableComponent + ConsumeEffect）。
 import net.minecraft.component.type.ConsumableComponent;
 import net.minecraft.component.type.ConsumableComponents;
@@ -25,10 +25,10 @@ public class ModFoodComponents {
 	/** 不死图腾作为食物时的饱食度、饱和度和效果。 */
 	public static final FoodComponent TOTEM_OF_UNDYING = new FoodComponent.Builder()
 			//? if <1.20.5 {
-			.hunger(6)
-			//?} else {
-			/*.nutrition(6)
-			*///?}
+			/*.hunger(6)
+			*///?} else {
+			.nutrition(6)
+			//?}
 			.saturationModifier(1.0f)
 			.alwaysEdible()
 			//? if <1.21.2 {

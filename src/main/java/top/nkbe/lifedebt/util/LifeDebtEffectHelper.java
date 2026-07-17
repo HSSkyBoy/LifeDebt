@@ -6,8 +6,8 @@ import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 //? if >=1.20.5 {
-/*import net.minecraft.registry.entry.RegistryEntry;
-*///?}
+import net.minecraft.registry.entry.RegistryEntry;
+//?}
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ public final class LifeDebtEffectHelper {
 	 */
 	public static void clearHarmfulStatusEffects(PlayerEntity player) {
 		//? if <1.20.5 {
-		List<StatusEffect> toRemove = new ArrayList<>();
+		/*List<StatusEffect> toRemove = new ArrayList<>();
 		for (StatusEffectInstance instance : player.getStatusEffects()) {
 			StatusEffect effect = instance.getEffectType();
 			if (effect.getCategory() == StatusEffectCategory.HARMFUL) {
@@ -37,8 +37,8 @@ public final class LifeDebtEffectHelper {
 		for (StatusEffect effect : toRemove) {
 			player.removeStatusEffect(effect);
 		}
-		//?} else {
-		/*List<RegistryEntry<StatusEffect>> toRemove = new ArrayList<>();
+		*///?} else {
+		List<RegistryEntry<StatusEffect>> toRemove = new ArrayList<>();
 		for (StatusEffectInstance instance : player.getStatusEffects()) {
 			RegistryEntry<StatusEffect> effect = instance.getEffectType();
 			if (effect.value().getCategory() == StatusEffectCategory.HARMFUL) {
@@ -48,7 +48,7 @@ public final class LifeDebtEffectHelper {
 		for (RegistryEntry<StatusEffect> effect : toRemove) {
 			player.removeStatusEffect(effect);
 		}
-		*///?}
+		//?}
 	}
 
 	/**

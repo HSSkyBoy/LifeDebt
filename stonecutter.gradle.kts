@@ -5,7 +5,7 @@ plugins {
 	id("fabric-loom") version "1.13.6" apply false
 }
 
-stonecutter active "1.20.1" /* [SC] DO NOT EDIT */
+stonecutter active "1.21.1" /* [SC] DO NOT EDIT */
 
 // Builds every registered version and collects the jars into `build/libs/{mod_version}/`.
 tasks.register("chiseledBuild") {

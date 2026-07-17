@@ -3,8 +3,8 @@ package top.nkbe.lifedebt.effect;
 import top.nkbe.lifedebt.util.LifeDebtPenaltyHandler;
 import net.minecraft.entity.LivingEntity;
 //? if <1.20.5 {
-import net.minecraft.entity.attribute.AttributeContainer;
-//?}
+/*import net.minecraft.entity.attribute.AttributeContainer;
+*///?}
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.entity.player.PlayerEntity;
@@ -27,17 +27,17 @@ public class LifeDebtEffect extends StatusEffect {
 	}
 
 	//? if <1.20.5 {
-	@Override
+	/*@Override
 	public void applyUpdateEffect(LivingEntity entity, int amplifier) {
 		// 不屈效果是被动触发的，不需要每 tick 更新
 	}
-	//?} elif <1.21.2 {
-	/*@Override
+	*///?} elif <1.21.2 {
+	@Override
 	public boolean applyUpdateEffect(LivingEntity entity, int amplifier) {
 		// 不屈效果是被动触发的，不需要每 tick 更新；返回 false 会导致效果被立即移除，必须返回 true
 		return true;
 	}
-	*///?} else {
+	//?} else {
 	/*// >=1.21.2：applyUpdateEffect 增加 ServerWorld 参数。
 	@Override
 	public boolean applyUpdateEffect(ServerWorld world, LivingEntity entity, int amplifier) {
@@ -47,7 +47,7 @@ public class LifeDebtEffect extends StatusEffect {
 	*///?}
 
 	//? if <1.20.5 {
-	@Override
+	/*@Override
 	public void onApplied(LivingEntity entity, AttributeContainer attributes, int amplifier) {
 		super.onApplied(entity, attributes, amplifier);
 
@@ -64,8 +64,8 @@ public class LifeDebtEffect extends StatusEffect {
 			LifeDebtPenaltyHandler.handleEffectEnd(player);
 		}
 	}
-	//?} else {
-	/*@Override
+	*///?} else {
+	@Override
 	public void onApplied(LivingEntity entity, int amplifier) {
 		super.onApplied(entity, amplifier);
 
@@ -76,5 +76,5 @@ public class LifeDebtEffect extends StatusEffect {
 
 	// >=1.20.5 的 StatusEffect 不再提供带 LivingEntity 的 onRemoved 钩子（仅剩 onRemoved(AttributeContainer)），
 	// 效果结束结算改由 LivingEntityRemoveEffectMixin 注入 LivingEntity#onStatusEffectRemoved 完成。
-	*///?}
+	//?}
 }

@@ -10,18 +10,12 @@ version = "${property("mod_version")}+mc$mcVersion"
 group = property("maven_group") as String
 base.archivesName = "lifedebt"
 
-// Java version required by each Minecraft version range.
-val requiredJava: JavaVersion = when {
-	stonecutter.eval(mcVersion, ">=1.20.6") -> JavaVersion.VERSION_21
-	stonecutter.eval(mcVersion, ">=1.18") -> JavaVersion.VERSION_17
-	stonecutter.eval(mcVersion, ">=1.17") -> JavaVersion.VERSION_16
-	else -> JavaVersion.VERSION_1_8
-}
+// Life Debt is intentionally a modern-only mod. All supported game versions use Java 21.
+val requiredJava = JavaVersion.VERSION_21
 
 loom {
-	// No splitEnvironmentSourceSets(): it requires a bundled server jar (MC 1.18+) and
-	// breaks configuration on 1.14-1.17. The mod has no client-only code, so a single
-	// merged `main` source set works across the whole 1.14.4-1.21.8 range.
+	// The gameplay authority remains on the integrated/dedicated server. Client UI is
+	// added through a separate client entrypoint when the contract screens are introduced.
 	mods {
 		create("lifedebt") {
 			sourceSet(sourceSets["main"])
@@ -70,9 +64,7 @@ tasks.processResources {
 		)
 	}
 
-	// The mixin JSON hard-codes "JAVA_17"; each Minecraft version compiles to a different
-	// bytecode level (Java 8/16/17/21), and Mixin's compatibilityLevel must be >= that level.
-	// Rewrite it per version at resource-processing time.
+	// All supported versions target Java 21, so the Mixin compatibility level follows it.
 	inputs.property("mixinJavaLevel", mixinJavaLevel)
 	filesMatching("lifedebt.mixins.json") {
 		filter { line -> line.replace("\"JAVA_17\"", "\"$mixinJavaLevel\"") }

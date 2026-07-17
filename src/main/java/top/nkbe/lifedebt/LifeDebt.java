@@ -1,17 +1,12 @@
 package top.nkbe.lifedebt;
 
 import top.nkbe.lifedebt.config.LifeDebtConfig;
+import top.nkbe.lifedebt.core.LifeDebtAttachments;
 import top.nkbe.lifedebt.effect.ModEffects;
-import top.nkbe.lifedebt.mixin.ItemAccessor;
+import top.nkbe.lifedebt.event.LifeDebtEvents;
 import top.nkbe.lifedebt.player.LifeDebtPlayerAccess;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
-//? if >=1.20.5 {
-/*import net.minecraft.component.ComponentMap;
-import net.minecraft.component.DataComponentTypes;
-*///?}
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
 
 public class LifeDebt implements ModInitializer {
 
@@ -21,7 +16,10 @@ public class LifeDebt implements ModInitializer {
 	public void onInitialize() {
 		LifeDebtConfig.load();
 		ModEffects.initialize();
+		LifeDebtAttachments.initialize();
+		LifeDebtEvents.register();
 
+		// 旧版重生清理逻辑，保留以兼容尚未移除的 1.x 效果系统（当前处于休眠状态）。
 		ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
 			if (newPlayer instanceof LifeDebtPlayerAccess access) {
 				access.lifedebt$clearMaxHealthPenalty();
@@ -29,29 +27,5 @@ public class LifeDebt implements ModInitializer {
 				access.lifedebt$setEffectEndSettled(false);
 			}
 		});
-
-		Item totem = Items.TOTEM_OF_UNDYING;
-		//? if <1.20.5 {
-		if (totem instanceof ItemAccessor accessor) {
-			accessor.setFoodComponent(ModFoodComponents.TOTEM_OF_UNDYING);
-		}
-		//?} elif <1.21.2 {
-		/*// >=1.20.5：食物属性存放在物品的数据组件表中，重建 ComponentMap 并追加 FOOD 组件。
-		if (totem instanceof ItemAccessor accessor) {
-			accessor.setComponents(ComponentMap.builder()
-					.addAll(totem.getComponents())
-					.add(DataComponentTypes.FOOD, ModFoodComponents.TOTEM_OF_UNDYING)
-					.build());
-		}
-		*///?} else {
-		/*// >=1.21.2：进食效果拆分至 CONSUMABLE 组件，需同时追加 FOOD 与 CONSUMABLE。
-		if (totem instanceof ItemAccessor accessor) {
-			accessor.setComponents(ComponentMap.builder()
-					.addAll(totem.getComponents())
-					.add(DataComponentTypes.FOOD, ModFoodComponents.TOTEM_OF_UNDYING)
-					.add(DataComponentTypes.CONSUMABLE, ModFoodComponents.TOTEM_OF_UNDYING_CONSUMABLE)
-					.build());
-		}
-		*///?}
 	}
 }

@@ -3,5 +3,7 @@
     "effect.lifedebt.life_debt.description": "持續時間內，當你死亡時會觸發不死圖騰效果，並獲得1分鐘的力量增益，或使力量增益提升2級（時間重置為1分鐘）。每次抵抗死亡後獲得疊乘減傷，並獲得等比例的擊退抗性（最高100%）；效果結束時，按死亡次數扣除等量生命上限，復活後恢復。",
     "advancements.lifedebt.burn_out_body.title": "燃盡此身",
     "advancements.lifedebt.burn_out_body.description": "在無盡的復甦中燃盡了自己。",
+    "lifedebt.message.signed": "已簽訂命債 — 可借命 %1$s 次。",
+    "lifedebt.message.borrowed": "已借命 — 剩餘借命：%1$s，債務：%2$s",
     "death.attack.burn_out": "%1$s燃盡了"
 }
