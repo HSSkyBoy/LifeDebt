@@ -30,5 +30,7 @@
     "lifedebt.level.debtor": "Debtor",
     "lifedebt.level.fugitive": "Fugitive",
     "lifedebt.level.dead_not_gone": "Dead Not Gone",
-    "item.lifedebt.debt_collector_spawn_egg": "Debt Collector Spawn Egg"
+    "item.lifedebt.debt_collector_spawn_egg": "Debt Collector Spawn Egg",
+    "lifedebt.message.assets_seized": "The debt seizes %1$s experience levels and your provisions.",
+    "lifedebt.message.death_sentence": "The debt issues a death sentence."
 }

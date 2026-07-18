@@ -9,6 +9,8 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Box;
@@ -39,6 +41,7 @@ public final class LifeDebtEvents {
 		registerDebtCollectorSpawns();
 		registerStarterContract();
 		registerContractEffects();
+		registerDebtLevelPenalties();
 		registerHudSync();
 		registerSignReminder();
 	}
@@ -86,6 +89,40 @@ public final class LifeDebtEvents {
 			}
 			for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
 				ContractEffects.tick(player);
+				LifeDebtManager.limitUncontractedHealth(player);
+			}
+		});
+	}
+
+	/** Keeps escalating debt consequences active while the player remains in that debt tier. */
+	private static void registerDebtLevelPenalties() {
+		ServerTickEvents.END_SERVER_TICK.register(server -> {
+			if (server.getTicks() % 40 != 0) {
+				return;
+			}
+			for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+				DebtLevel level = LifeDebtAttachments.get(player).getLevel();
+				if (level.ordinal() >= DebtLevel.FUGITIVE.ordinal()) {
+					// Villages turn hostile; every thirty seconds the debt also seizes supplies.
+					player.addStatusEffect(new StatusEffectInstance(StatusEffects.BAD_OMEN, 600, 0, false, false, true));
+					if (server.getTicks() % 600 == 0) {
+						int seizedLevels = Math.min(2, player.experienceLevel);
+						if (seizedLevels > 0) {
+							player.addExperienceLevels(-seizedLevels);
+						}
+						player.getHungerManager().setFoodLevel(Math.max(0, player.getHungerManager().getFoodLevel() - 4));
+						player.sendMessage(Text.translatable("lifedebt.message.assets_seized", seizedLevels), true);
+					}
+				}
+				if (level == DebtLevel.DEAD_NOT_GONE) {
+					// Terminal debt: the world itself is trying to finish the collection.
+					player.addStatusEffect(new StatusEffectInstance(StatusEffects.DARKNESS, 100, 0, false, false, false));
+					player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 100, 1, false, false, false));
+					if (server.getTicks() % 200 == 0) {
+						player.damage(player.getDamageSources().magic(), 4.0f);
+						player.sendMessage(Text.translatable("lifedebt.message.death_sentence"), true);
+					}
+				}
 			}
 		});
 	}
@@ -210,13 +247,12 @@ public final class LifeDebtEvents {
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 			ServerPlayerEntity player = handler.getPlayer();
 			LifeDebtData data = LifeDebtAttachments.get(player);
-			if (data.isStarterContractGranted()) {
-				return;
+			if (!data.isStarterContractGranted()) {
+				player.giveItemStack(new ItemStack(Items.TOTEM_OF_UNDYING));
+				data.setStarterContractGranted(true);
+				player.sendMessage(Text.translatable("lifedebt.message.starter_contract"), true);
 			}
-			player.giveItemStack(new ItemStack(Items.TOTEM_OF_UNDYING));
-			data.setStarterContractGranted(true);
 			LifeDebtManager.updateContractPenalty(player);
-			player.sendMessage(Text.translatable("lifedebt.message.starter_contract"), true);
 		});
 	}
 }

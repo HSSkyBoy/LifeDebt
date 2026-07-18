@@ -30,5 +30,7 @@
     "lifedebt.level.debtor": "负债者",
     "lifedebt.level.fugitive": "亡命者",
     "lifedebt.level.dead_not_gone": "死人未亡",
-    "item.lifedebt.debt_collector_spawn_egg": "追债者刷怪蛋"
+    "item.lifedebt.debt_collector_spawn_egg": "追债者刷怪蛋",
+    "lifedebt.message.assets_seized": "债务没收了 %1$s 级经验与补给。",
+    "lifedebt.message.death_sentence": "债务向你下达了死亡判决。"
 }
