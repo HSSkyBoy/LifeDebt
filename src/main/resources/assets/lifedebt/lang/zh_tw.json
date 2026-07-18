@@ -29,5 +29,6 @@
     "lifedebt.level.borrower": "借命者",
     "lifedebt.level.debtor": "負債者",
     "lifedebt.level.fugitive": "亡命者",
-    "lifedebt.level.dead_not_gone": "死人未亡"
+    "lifedebt.level.dead_not_gone": "死人未亡",
+    "item.lifedebt.debt_collector_spawn_egg": "追債者生怪蛋"
 }

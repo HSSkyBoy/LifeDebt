@@ -29,5 +29,6 @@
     "lifedebt.level.borrower": "Borrower",
     "lifedebt.level.debtor": "Debtor",
     "lifedebt.level.fugitive": "Fugitive",
-    "lifedebt.level.dead_not_gone": "Dead Not Gone"
+    "lifedebt.level.dead_not_gone": "Dead Not Gone",
+    "item.lifedebt.debt_collector_spawn_egg": "Debt Collector Spawn Egg"
 }
