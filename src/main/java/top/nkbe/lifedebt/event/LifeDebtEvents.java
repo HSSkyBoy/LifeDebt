@@ -220,16 +220,21 @@ public final class LifeDebtEvents {
 					world.spawnParticles(ParticleTypes.SOUL, player.getX(), player.getY() + 1.0, player.getZ(),
 							2, 0.25, 0.5, 0.25, 0.01);
 				}
-				if (debt < DebtLevel.DEBTOR.threshold || world.getRandom().nextInt(1200) != 0) {
+				DebtLevel level = DebtLevel.fromDebt(debt);
+				int spawnInterval = level == DebtLevel.DEAD_NOT_GONE ? 80
+						: level == DebtLevel.FUGITIVE ? 400 : 900;
+				int nearbyLimit = level == DebtLevel.DEAD_NOT_GONE ? 6
+						: level == DebtLevel.FUGITIVE ? 4 : 2;
+				if (debt < DebtLevel.DEBTOR.threshold || world.getRandom().nextInt(spawnInterval) != 0) {
 					continue;
 				}
 				Box nearby = player.getBoundingBox().expand(32.0);
-				if (world.getEntitiesByClass(DebtCollectorEntity.class, nearby, entity -> true).size() >= 2) {
+				if (world.getEntitiesByClass(DebtCollectorEntity.class, nearby, entity -> true).size() >= nearbyLimit) {
 					continue;
 				}
 				int x = player.getBlockPos().getX() + world.getRandom().nextInt(17) - 8;
 				int z = player.getBlockPos().getZ() + world.getRandom().nextInt(17) - 8;
-				int y = world.getTopY(net.minecraft.world.Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, x, z);
+				int y = world.getTopY(net.minecraft.world.Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, x, z) + 4;
 				BlockPos spawnPos = new BlockPos(x, y, z);
 				if (!world.getBlockState(spawnPos).isAir() || !world.getBlockState(spawnPos.up()).isAir()) {
 					continue;
@@ -238,6 +243,8 @@ public final class LifeDebtEvents {
 				if (collector != null) {
 					collector.refreshPositionAndAngles(x + 0.5, y, z + 0.5, world.getRandom().nextFloat() * 360.0f, 0.0f);
 					world.spawnEntity(collector);
+					player.addStatusEffect(new net.minecraft.entity.effect.StatusEffectInstance(
+							net.minecraft.entity.effect.StatusEffects.BLINDNESS, 100, 0, false, false, false));
 				}
 			}
 		});
