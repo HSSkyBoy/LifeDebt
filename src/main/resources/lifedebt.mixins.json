@@ -7,7 +7,8 @@
     "LivingEntityDamageMixin",
     "LivingEntityRemoveEffectMixin",
     "PlayerEntityLifeDebtMixin",
-    "PlayerEntityMixin"
+    "PlayerEntityMixin",
+    "PlayerEntityXpMixin"
   ],
   "injectors": {
     "defaultRequire": 1

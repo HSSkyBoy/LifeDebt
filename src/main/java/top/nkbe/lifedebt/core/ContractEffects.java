@@ -1,9 +1,9 @@
 package top.nkbe.lifedebt.core;
 
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.ItemStack;
@@ -51,6 +51,16 @@ public final class ContractEffects {
 	private static final int ESCAPE_MIN_DISTANCE = 6;
 	private static final int ESCAPE_MAX_DISTANCE = 10;
 
+	/** 亡契常驻移速修饰符 ID（随债务等级每 tick 重算）。 */
+	private static final Identifier ESCAPE_SPEED_ID =
+			Identifier.of("lifedebt", "escape_pact_speed");
+
+	/** 亡契常驻移速加成基准（0.10 = +10%），随债务等级放大。 */
+	private static final double ESCAPE_SPEED_BONUS = 0.10;
+
+	/** 魂契经验获取加成基准（0.25 = +25%），随债务等级放大。 */
+	private static final double SOUL_XP_BONUS = 0.25;
+
 	private ContractEffects() {
 	}
 
@@ -60,6 +70,27 @@ public final class ContractEffects {
 	 */
 	public static void tick(ServerPlayerEntity player) {
 		updateBloodPact(player);
+		updateEscapePact(player);
+	}
+
+	/**
+	 * 负债越深、力量越强：按债务等级放大契约增益。
+	 * 正常 1.0，每升一级 +0.2，死人未亡 1.8——玩家可以主动养债换取强度。
+	 */
+	public static double debtScale(LifeDebtData data) {
+		return 1.0 + 0.2 * data.getLevel().ordinal();
+	}
+
+	/**
+	 * 魂契的经验获取倍率（供 {@code PlayerEntityXpMixin} 调用）；非魂契返回 1。
+	 * 基准 +{@value #SOUL_XP_BONUS}，随债务等级放大。
+	 */
+	public static double xpMultiplier(ServerPlayerEntity player) {
+		LifeDebtData data = LifeDebtAttachments.get(player);
+		if (data.getContract() != ContractType.SOUL) {
+			return 1.0;
+		}
+		return 1.0 + SOUL_XP_BONUS * debtScale(data);
 	}
 
 	/**
@@ -182,12 +213,35 @@ public final class ContractEffects {
 			return;
 		}
 
-		// ADD_MULTIPLIED_TOTAL：对含武器加成的最终数值整体乘 (1 + bonus)。
+		// ADD_MULTIPLIED_TOTAL：对含武器加成的最终数值整体乘 (1 + bonus)；债务等级放大上限。
+		double scale = debtScale(data);
 		attack.addTemporaryModifier(new EntityAttributeModifier(
-				BLOOD_DAMAGE_ID, missing * BLOOD_MAX_DAMAGE_BONUS,
+				BLOOD_DAMAGE_ID, missing * BLOOD_MAX_DAMAGE_BONUS * scale,
 				EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
 		attackSpeed.addTemporaryModifier(new EntityAttributeModifier(
-				BLOOD_ATTACK_SPEED_ID, missing * BLOOD_MAX_ATTACK_SPEED_BONUS,
+				BLOOD_ATTACK_SPEED_ID, missing * BLOOD_MAX_ATTACK_SPEED_BONUS * scale,
+				EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+	}
+
+	/** 亡契常驻收益：移速加成，跑图、探索、脱身都更利落；随债务等级放大。 */
+	private static void updateEscapePact(ServerPlayerEntity player) {
+		EntityAttributeInstance speed = player.getAttributeInstance(
+				//? if >=1.21.2 {
+				/*EntityAttributes.MOVEMENT_SPEED
+				*///?} else {
+				EntityAttributes.GENERIC_MOVEMENT_SPEED
+				//?}
+		);
+		if (speed == null) {
+			return;
+		}
+		speed.removeModifier(ESCAPE_SPEED_ID);
+		LifeDebtData data = LifeDebtAttachments.get(player);
+		if (data.getContract() != ContractType.ESCAPE) {
+			return;
+		}
+		speed.addTemporaryModifier(new EntityAttributeModifier(
+				ESCAPE_SPEED_ID, ESCAPE_SPEED_BONUS * debtScale(data),
 				EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
 	}
 }
