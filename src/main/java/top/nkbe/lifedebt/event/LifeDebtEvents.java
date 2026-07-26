@@ -224,7 +224,8 @@ public final class LifeDebtEvents {
 				return;
 			}
 			for (ServerPlayerEntity player : world.getPlayers()) {
-				int debt = LifeDebtAttachments.get(player).getDebt();
+				LifeDebtData data = LifeDebtAttachments.get(player);
+				int debt = data.getDebt();
 				if (debt >= DebtLevel.BORROWER.threshold && world.getTime() % 20L == 0L) {
 					world.spawnParticles(ParticleTypes.SOUL, player.getX(), player.getY() + 1.0, player.getZ(),
 							2, 0.25, 0.5, 0.25, 0.01);
@@ -232,6 +233,10 @@ public final class LifeDebtEvents {
 				DebtLevel level = DebtLevel.fromDebt(debt);
 				int spawnInterval = level == DebtLevel.DEAD_NOT_GONE ? 80
 						: level == DebtLevel.FUGITIVE ? 400 : 900;
+				if (data.getContract() == ContractType.ESCAPE) {
+					// 亡契的代价：逃得掉一时，被追债的概率翻倍。
+					spawnInterval = Math.max(40, spawnInterval / 2);
+				}
 				int nearbyLimit = level == DebtLevel.DEAD_NOT_GONE ? 6
 						: level == DebtLevel.FUGITIVE ? 4 : 2;
 				if (debt < DebtLevel.DEBTOR.threshold || world.getRandom().nextInt(spawnInterval) != 0) {
