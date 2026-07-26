@@ -114,6 +114,10 @@ public final class LifeDebtEvents {
 						player.getHungerManager().setFoodLevel(Math.max(0, player.getHungerManager().getFoodLevel() - 4));
 						player.sendMessage(Text.translatable("lifedebt.message.assets_seized", seizedLevels), true);
 					}
+					// 与没收错峰：亡命者的债务传遍村庄，村民以负面流言抬价（原版声誉机制，还清后随时间衰减恢复）。
+					if (server.getTicks() % 600 == 240) {
+						spreadDebtGossip(player);
+					}
 				}
 				if (level == DebtLevel.DEAD_NOT_GONE) {
 					// Terminal debt must be frightening but recoverable: pressure, never a death loop.
@@ -123,6 +127,24 @@ public final class LifeDebtEvents {
 				}
 			}
 		});
+	}
+
+	/**
+	 * 村民涨价：对附近村民散布关于该玩家的负面流言。原版交易会按声誉抬高价格
+	 * （负声誉 → special price 上调），无需 mixin；流言随时间自然衰减，
+	 * 还清债务后价格会在数个游戏日内恢复。
+	 */
+	private static void spreadDebtGossip(ServerPlayerEntity player) {
+		java.util.List<net.minecraft.entity.passive.VillagerEntity> villagers =
+				player.getServerWorld().getEntitiesByClass(net.minecraft.entity.passive.VillagerEntity.class,
+						player.getBoundingBox().expand(16.0), net.minecraft.entity.passive.VillagerEntity::isAlive);
+		for (net.minecraft.entity.passive.VillagerEntity villager : villagers) {
+			villager.getGossip().startGossip(player.getUuid(),
+					net.minecraft.village.VillageGossipType.MINOR_NEGATIVE, 25);
+		}
+		if (!villagers.isEmpty()) {
+			player.sendMessage(Text.translatable("lifedebt.message.villager_price"), true);
+		}
 	}
 
 	/**
