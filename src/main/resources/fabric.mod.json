@@ -3,7 +3,7 @@
 	"id": "lifedebt",
 	"version": "${version}",
 	"name": "Life Debt",
-	"description": "Cheat death by burning your future vitality: eating a Totem of Undying grants a buff that resists lethal damage, but every death you defy is repaid as permanent max-health loss when it ends.",
+	"description": "Borrow lives from the Reaper: sign a voluntary pact for always-on power and death protection, while every borrowed life piles up debt the world will come to collect.",
 	"authors": [
 		"nkbe"
 	],
