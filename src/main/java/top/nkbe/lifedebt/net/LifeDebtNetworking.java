@@ -5,7 +5,6 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import net.minecraft.util.Hand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import top.nkbe.lifedebt.core.ContractType;
@@ -50,7 +49,8 @@ public final class LifeDebtNetworking {
 	}
 
 	/**
-	 * 服务端权威签约：校验手持图腾且尚无借命容量后，写入契约与容量并消耗一枚图腾。
+	 * 服务端权威签约：校验背包持有图腾且尚无借命容量后，写入契约与容量并消耗一枚图腾。
+	 * 面板由死神债券随时打开，签约本身仍以图腾为祭品（开局赠送的图腾覆盖首签）。
 	 */
 	private static void handleSign(ServerPlayerEntity player, String contractId) {
 		LifeDebtData data = LifeDebtAttachments.get(player);
@@ -64,14 +64,9 @@ public final class LifeDebtNetworking {
 			return;
 		}
 
-		// 定位手持的图腾（主手优先）。客户端不可信，图腾归属由服务端复核。
-		Hand hand = null;
-		if (player.getMainHandStack().isOf(Items.TOTEM_OF_UNDYING)) {
-			hand = Hand.MAIN_HAND;
-		} else if (player.getOffHandStack().isOf(Items.TOTEM_OF_UNDYING)) {
-			hand = Hand.OFF_HAND;
-		}
-		if (hand == null) {
+		// 客户端不可信，图腾归属由服务端复核；从整个背包中定位并消耗。
+		if (!player.getAbilities().creativeMode && !consumeTotem(player)) {
+			player.sendMessage(Text.translatable("lifedebt.message.sign_need_totem"), true);
 			return;
 		}
 
@@ -79,9 +74,6 @@ public final class LifeDebtNetworking {
 		data.setTotemCharge(DEFAULT_TOTEM_CHARGE);
 		LifeDebtManager.updateContractPenalty(player);
 		player.setHealth(player.getMaxHealth());
-		if (!player.getAbilities().creativeMode) {
-			player.getStackInHand(hand).decrement(1);
-		}
 
 		LOGGER.info("[签约] {} 签订{}，获得借命容量={}",
 				player.getName().getString(), contract.asString(), DEFAULT_TOTEM_CHARGE);
@@ -89,5 +81,16 @@ public final class LifeDebtNetworking {
 				Text.translatable("lifedebt.message.signed_contract",
 						Text.translatable(contract.translationKey()), DEFAULT_TOTEM_CHARGE),
 				true);
+	}
+
+	/** 从背包（含副手）消耗一枚不死图腾；成功返回 {@code true}。 */
+	private static boolean consumeTotem(ServerPlayerEntity player) {
+		for (int slot = 0; slot < player.getInventory().size(); slot++) {
+			if (player.getInventory().getStack(slot).isOf(Items.TOTEM_OF_UNDYING)) {
+				player.getInventory().getStack(slot).decrement(1);
+				return true;
+			}
+		}
+		return false;
 	}
 }

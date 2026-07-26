@@ -31,9 +31,8 @@ public final class LifeDebtManager {
 
 	/** 生命上限扣除后的下限，避免归零导致玩家无法存活。 */
 	private static final double MIN_MAX_HEALTH = 2.0;
-	/** 原版最大生命屬性的下限為 1；未簽約者的實際生命再另外鎖到 0.5。 */
-	private static final double UNCONTRACTED_MAX_HEALTH = 1.0;
-	private static final float UNCONTRACTED_CURRENT_HEALTH = 0.5f;
+	/** 未签约者的生命上限扣减（5 = 2.5 颗心）：轻度的开局压力，签约即解除。 */
+	private static final double UNCONTRACTED_HEALTH_PENALTY = 5.0;
 
 	/**
 	 * 借命生命上限惩罚所用的属性修饰符 ID。与旧 1.x 休眠系统的
@@ -91,7 +90,7 @@ public final class LifeDebtManager {
 		applyMaxHealthPenalty(player, LifeDebtAttachments.get(player).getBorrowedLife());
 	}
 
-	/** Applies the pre-contract survival pressure, or removes it after signing. */
+	/** Applies the light pre-contract health penalty, or removes it after signing. */
 	public static void updateContractPenalty(ServerPlayerEntity player) {
 		EntityAttributeInstance attr = player.getAttributeInstance(
 				//? if >=1.21.2 {
@@ -106,7 +105,7 @@ public final class LifeDebtManager {
 		attr.removeModifier(UNCONTRACTED_PENALTY_ID);
 		LifeDebtData data = LifeDebtAttachments.get(player);
 		if (data.getContract() == ContractType.NONE) {
-			double penalty = Math.max(0.0, attr.getBaseValue() - UNCONTRACTED_MAX_HEALTH);
+			double penalty = Math.min(UNCONTRACTED_HEALTH_PENALTY, Math.max(0.0, attr.getBaseValue() - MIN_MAX_HEALTH));
 			if (penalty > 0.0) {
 				attr.addPersistentModifier(new EntityAttributeModifier(
 						UNCONTRACTED_PENALTY_ID, -penalty, EntityAttributeModifier.Operation.ADD_VALUE));
@@ -114,15 +113,6 @@ public final class LifeDebtManager {
 		}
 		if (player.getHealth() > player.getMaxHealth()) {
 			player.setHealth(player.getMaxHealth());
-		}
-		limitUncontractedHealth(player);
-	}
-
-	/** Prevents natural regeneration from raising an unsigned player above a quarter heart. */
-	public static void limitUncontractedHealth(ServerPlayerEntity player) {
-		if (LifeDebtAttachments.get(player).getContract() == ContractType.NONE
-				&& player.getHealth() > UNCONTRACTED_CURRENT_HEALTH) {
-			player.setHealth(UNCONTRACTED_CURRENT_HEALTH);
 		}
 	}
 

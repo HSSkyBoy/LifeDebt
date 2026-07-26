@@ -14,6 +14,7 @@ import top.nkbe.lifedebt.entity.ModEntities;
 public final class ModItems {
 
 	public static final Item DEBT_VOUCHER = register("debt_voucher", new Item(new Item.Settings()));
+	public static final Item REAPER_BOND = register("reaper_bond", new ReaperBondItem(new Item.Settings().maxCount(1)));
 	public static final Item DEBT_COLLECTOR_SPAWN_EGG = register("debt_collector_spawn_egg",
 			new SpawnEggItem(ModEntities.DEBT_COLLECTOR, 0x111923, 0x9E1118, new Item.Settings()));
 
@@ -22,6 +23,7 @@ public final class ModItems {
 
 	public static void initialize() {
 		ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(entries -> entries.add(DEBT_VOUCHER));
+		ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(entries -> entries.add(REAPER_BOND));
 		ItemGroupEvents.modifyEntriesEvent(ItemGroups.SPAWN_EGGS).register(entries -> entries.add(DEBT_COLLECTOR_SPAWN_EGG));
 	}
 

@@ -1,9 +1,7 @@
 package top.nkbe.lifedebt.event;
 
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
-import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.item.ItemStack;
@@ -17,7 +15,6 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.text.Text;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.TypedActionResult;
 import top.nkbe.lifedebt.block.ModBlocks;
 import top.nkbe.lifedebt.core.ContractEffects;
 import top.nkbe.lifedebt.core.LifeDebtAttachments;
@@ -28,7 +25,6 @@ import top.nkbe.lifedebt.core.ContractType;
 import top.nkbe.lifedebt.item.ModItems;
 import top.nkbe.lifedebt.entity.DebtCollectorEntity;
 import top.nkbe.lifedebt.entity.ModEntities;
-import top.nkbe.lifedebt.net.OpenContractScreenPayload;
 
 public final class LifeDebtEvents {
 
@@ -37,31 +33,12 @@ public final class LifeDebtEvents {
 
 	public static void register() {
 		registerDeathHook();
-		registerTotemSigning();
 		registerAltarRepay();
 		registerDebtCollectorSpawns();
-		registerStarterContract();
+		registerStarterKit();
 		registerContractEffects();
 		registerDebtLevelPenalties();
 		registerHudSync();
-		registerSignReminder();
-	}
-
-	/**
-	 * 未签约玩家会被压到 5 颗心（{@link LifeDebtManager#updateContractPenalty}），
-	 * 这里每 10 秒在 actionbar 提醒其手持不死图腾右键签约以解除压制。
-	 */
-	private static void registerSignReminder() {
-		ServerTickEvents.END_SERVER_TICK.register(server -> {
-			if (server.getTicks() % 200 != 0) {
-				return;
-			}
-			for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-				if (LifeDebtAttachments.get(player).getContract() == top.nkbe.lifedebt.core.ContractType.NONE) {
-					player.sendMessage(Text.translatable("lifedebt.message.sign_reminder"), true);
-				}
-			}
-		});
 	}
 
 	/**
@@ -90,7 +67,6 @@ public final class LifeDebtEvents {
 			}
 			for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
 				ContractEffects.tick(player);
-				LifeDebtManager.limitUncontractedHealth(player);
 			}
 		});
 	}
@@ -153,42 +129,10 @@ public final class LifeDebtEvents {
 	private static void registerDeathHook() {
 		ServerLivingEntityEvents.ALLOW_DEATH.register((entity, source, amount) -> {
 			if (entity instanceof ServerPlayerEntity player) {
-				if (LifeDebtAttachments.get(player).getContract() == ContractType.NONE) {
-					removeUnsignedTotems(player);
-				}
 				// handleDeath 返回 true 表示已借命并阻止死亡 → 不允许死亡发生。
 				return !LifeDebtManager.handleDeath(player);
 			}
 			return true;
-		});
-	}
-
-	private static void removeUnsignedTotems(ServerPlayerEntity player) {
-		for (int slot = 0; slot < player.getInventory().size(); slot++) {
-			if (player.getInventory().getStack(slot).isOf(Items.TOTEM_OF_UNDYING)) {
-				player.getInventory().setStack(slot, ItemStack.EMPTY);
-			}
-		}
-	}
-
-	private static void registerTotemSigning() {
-		UseItemCallback.EVENT.register((player, world, hand) -> {
-			ItemStack stack = player.getStackInHand(hand);
-			if (world.isClient() || !stack.isOf(Items.TOTEM_OF_UNDYING)) {
-				return TypedActionResult.pass(stack);
-			}
-			if (!(player instanceof ServerPlayerEntity serverPlayer)) {
-				return TypedActionResult.pass(stack);
-			}
-
-			LifeDebtData data = LifeDebtAttachments.get(player);
-			// 已有剩余借命容量时不重复签约，避免浪费图腾。
-			if (data.getTotemCharge() > 0) {
-				return TypedActionResult.pass(stack);
-			}
-
-			ServerPlayNetworking.send(serverPlayer, new OpenContractScreenPayload());
-			return TypedActionResult.success(stack, false);
 		});
 	}
 
@@ -286,16 +230,33 @@ public final class LifeDebtEvents {
 		});
 	}
 
-	private static void registerStarterContract() {
+	/**
+	 * 开局礼包：首次进入世界赠送一枚不死图腾（覆盖首签成本）与一张死神债券，
+	 * 并只弹一次温和提示——之后签不签全凭玩家自愿，不再打扰。
+	 * 债券若丢失，上线时自动补发，等效于「永久持有」而无需防丢机制。
+	 */
+	private static void registerStarterKit() {
 		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
 			ServerPlayerEntity player = handler.getPlayer();
 			LifeDebtData data = LifeDebtAttachments.get(player);
 			if (!data.isStarterContractGranted()) {
 				player.giveItemStack(new ItemStack(Items.TOTEM_OF_UNDYING));
 				data.setStarterContractGranted(true);
-				player.sendMessage(Text.translatable("lifedebt.message.starter_contract"), true);
+				player.sendMessage(Text.translatable("lifedebt.message.starter_bond"), false);
+			}
+			if (!hasReaperBond(player)) {
+				player.giveItemStack(new ItemStack(ModItems.REAPER_BOND));
 			}
 			LifeDebtManager.updateContractPenalty(player);
 		});
+	}
+
+	private static boolean hasReaperBond(ServerPlayerEntity player) {
+		for (int slot = 0; slot < player.getInventory().size(); slot++) {
+			if (player.getInventory().getStack(slot).isOf(ModItems.REAPER_BOND)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
