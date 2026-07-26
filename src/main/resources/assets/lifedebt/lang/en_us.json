@@ -36,5 +36,7 @@
     "item.lifedebt.debt_collector_spawn_egg": "Debt Collector Spawn Egg",
     "lifedebt.message.villager_price": "Word of your debt spreads — villagers are raising their prices against you.",
     "lifedebt.message.assets_seized":"The debt seizes %1$s experience levels and your provisions.",
-    "lifedebt.message.death_sentence": "The debt issues a death sentence."
+    "lifedebt.book.ruin_page1": "Someone once borrowed a life from the Reaper here. Every crack in this altar is a debt that was never repaid.",
+    "lifedebt.book.ruin_page2": "Touch the altar with a totem or a voucher to pay your debt down. Remember: the deeper the debt, the closer the Reaper's gaze — and the greater the power it lends.",
+    "lifedebt.message.death_sentence":"The debt issues a death sentence."
 }

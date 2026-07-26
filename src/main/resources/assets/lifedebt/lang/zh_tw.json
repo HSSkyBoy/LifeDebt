@@ -36,5 +36,7 @@
     "item.lifedebt.debt_collector_spawn_egg": "追債者生怪蛋",
     "lifedebt.message.villager_price": "你的債務已傳遍村莊——村民對你抬高了價格。",
     "lifedebt.message.assets_seized":"債務沒收了 %1$s 級經驗與補給。",
-    "lifedebt.message.death_sentence": "債務向你下達了死亡判決。"
+    "lifedebt.book.ruin_page1": "此地曾有人向死神借命。祭壇上的每一道裂痕，都是一筆未曾還清的債。",
+    "lifedebt.book.ruin_page2": "以圖騰或債券觸碰祭壇，可償還命債。切記：債務越深，死神的目光越近——它借出的力量也越大。",
+    "lifedebt.message.death_sentence":"債務向你下達了死亡判決。"
 }
