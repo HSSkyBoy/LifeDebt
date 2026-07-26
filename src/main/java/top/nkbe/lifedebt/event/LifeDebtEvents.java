@@ -112,11 +112,11 @@ public final class LifeDebtEvents {
 	 */
 	private static void spreadDebtGossip(ServerPlayerEntity player) {
 		java.util.List<net.minecraft.entity.passive.VillagerEntity> villagers =
-				player.getServerWorld().getEntitiesByClass(net.minecraft.entity.passive.VillagerEntity.class,
+				player.getEntityWorld().getEntitiesByClass(net.minecraft.entity.passive.VillagerEntity.class,
 						player.getBoundingBox().expand(16.0), net.minecraft.entity.passive.VillagerEntity::isAlive);
 		for (net.minecraft.entity.passive.VillagerEntity villager : villagers) {
 			villager.getGossip().startGossip(player.getUuid(),
-					net.minecraft.village.VillageGossipType.MINOR_NEGATIVE, 25);
+					net.minecraft.village.VillagerGossipType.MINOR_NEGATIVE, 25);
 		}
 		if (!villagers.isEmpty()) {
 			player.sendMessage(Text.translatable("lifedebt.message.villager_price"), true);
@@ -219,7 +219,7 @@ public final class LifeDebtEvents {
 				if (!world.getBlockState(spawnPos).isAir() || !world.getBlockState(spawnPos.up()).isAir()) {
 					continue;
 				}
-				DebtCollectorEntity collector = ModEntities.DEBT_COLLECTOR.create(world);
+				DebtCollectorEntity collector = ModEntities.DEBT_COLLECTOR.create(world, net.minecraft.entity.SpawnReason.NATURAL);
 				if (collector != null) {
 					collector.refreshPositionAndAngles(x + 0.5, y, z + 0.5, world.getRandom().nextFloat() * 360.0f, 0.0f);
 					world.spawnEntity(collector);

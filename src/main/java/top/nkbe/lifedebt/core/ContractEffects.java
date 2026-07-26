@@ -175,20 +175,8 @@ public final class ContractEffects {
 	}
 
 	private static void updateBloodPact(ServerPlayerEntity player) {
-		EntityAttributeInstance attack = player.getAttributeInstance(
-				//? if >=1.21.2 {
-				/*EntityAttributes.ATTACK_DAMAGE
-				*///?} else {
-				EntityAttributes.GENERIC_ATTACK_DAMAGE
-				//?}
-		);
-		EntityAttributeInstance attackSpeed = player.getAttributeInstance(
-				//? if >=1.21.2 {
-				/*EntityAttributes.ATTACK_SPEED
-				*///?} else {
-				EntityAttributes.GENERIC_ATTACK_SPEED
-				//?}
-		);
+		EntityAttributeInstance attack = player.getAttributeInstance(EntityAttributes.ATTACK_DAMAGE);
+		EntityAttributeInstance attackSpeed = player.getAttributeInstance(EntityAttributes.ATTACK_SPEED);
 		if (attack == null || attackSpeed == null) {
 			return;
 		}
@@ -225,13 +213,7 @@ public final class ContractEffects {
 
 	/** 亡契常驻收益：移速加成，跑图、探索、脱身都更利落；随债务等级放大。 */
 	private static void updateEscapePact(ServerPlayerEntity player) {
-		EntityAttributeInstance speed = player.getAttributeInstance(
-				//? if >=1.21.2 {
-				/*EntityAttributes.MOVEMENT_SPEED
-				*///?} else {
-				EntityAttributes.GENERIC_MOVEMENT_SPEED
-				//?}
-		);
+		EntityAttributeInstance speed = player.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED);
 		if (speed == null) {
 			return;
 		}

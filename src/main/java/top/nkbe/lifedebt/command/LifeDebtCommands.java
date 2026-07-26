@@ -36,7 +36,7 @@ public final class LifeDebtCommands {
 	public static void register() {
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
 				dispatcher.register(CommandManager.literal("lifedebt")
-						.requires(source -> source.hasPermissionLevel(2))
+						.requires(source -> CommandManager.GAMEMASTERS_CHECK.allows(source.getPermissions()))
 						.then(CommandManager.literal("altar").executes(LifeDebtCommands::placeAltar))
 						.then(CommandManager.literal("locate_altar").executes(LifeDebtCommands::teleportToTestAltar))
 						.then(CommandManager.literal("collector").executes(LifeDebtCommands::spawnCollector))
@@ -84,7 +84,7 @@ public final class LifeDebtCommands {
 	private static int placeAltar(com.mojang.brigadier.context.CommandContext<ServerCommandSource> ctx)
 			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
 		ServerPlayerEntity player = ctx.getSource().getPlayerOrThrow();
-		ServerWorld world = player.getServerWorld();
+		ServerWorld world = player.getEntityWorld();
 		BlockPos pos = player.getBlockPos();
 		world.setBlockState(pos, ModBlocks.DEBT_ALTAR.getDefaultState());
 		ctx.getSource().sendFeedback(
@@ -96,7 +96,7 @@ public final class LifeDebtCommands {
 	private static int teleportToTestAltar(com.mojang.brigadier.context.CommandContext<ServerCommandSource> ctx)
 			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
 		ServerPlayerEntity player = ctx.getSource().getPlayerOrThrow();
-		ServerWorld world = player.getServerWorld();
+		ServerWorld world = player.getEntityWorld();
 		int x = player.getBlockPos().getX() + 96;
 		int z = player.getBlockPos().getZ() + 96;
 		int y = world.getTopY(net.minecraft.world.Heightmap.Type.WORLD_SURFACE, x, z);
@@ -116,8 +116,8 @@ public final class LifeDebtCommands {
 	private static int spawnCollector(com.mojang.brigadier.context.CommandContext<ServerCommandSource> ctx)
 			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
 		ServerPlayerEntity player = ctx.getSource().getPlayerOrThrow();
-		ServerWorld world = player.getServerWorld();
-		DebtCollectorEntity collector = ModEntities.DEBT_COLLECTOR.create(world);
+		ServerWorld world = player.getEntityWorld();
+		DebtCollectorEntity collector = ModEntities.DEBT_COLLECTOR.create(world, net.minecraft.entity.SpawnReason.COMMAND);
 		if (collector == null) {
 			ctx.getSource().sendError(Text.literal("追债者生成失败。"));
 			return 0;

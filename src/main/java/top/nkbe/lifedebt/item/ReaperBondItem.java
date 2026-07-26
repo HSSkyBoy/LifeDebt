@@ -3,10 +3,9 @@ package top.nkbe.lifedebt.item;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import top.nkbe.lifedebt.net.OpenContractScreenPayload;
 
@@ -21,11 +20,10 @@ public class ReaperBondItem extends Item {
 	}
 
 	@Override
-	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-		ItemStack stack = user.getStackInHand(hand);
+	public ActionResult use(World world, PlayerEntity user, Hand hand) {
 		if (!world.isClient() && user instanceof ServerPlayerEntity serverPlayer) {
 			ServerPlayNetworking.send(serverPlayer, new OpenContractScreenPayload());
 		}
-		return TypedActionResult.success(stack, world.isClient());
+		return ActionResult.SUCCESS;
 	}
 }
