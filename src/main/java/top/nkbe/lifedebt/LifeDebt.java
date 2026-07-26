@@ -11,6 +11,7 @@ import top.nkbe.lifedebt.entity.ModEntities;
 import top.nkbe.lifedebt.command.LifeDebtCommands;
 import top.nkbe.lifedebt.net.LifeDebtNetworking;
 import top.nkbe.lifedebt.player.LifeDebtPlayerAccess;
+import top.nkbe.lifedebt.worldgen.ModWorldGen;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 
@@ -25,6 +26,7 @@ public class LifeDebt implements ModInitializer {
 		ModBlocks.initialize();
 		ModItems.initialize();
 		ModEntities.initialize();
+		ModWorldGen.initialize();
 		LifeDebtAttachments.initialize();
 		LifeDebtNetworking.registerPayloads();
 		LifeDebtNetworking.registerServerReceivers();

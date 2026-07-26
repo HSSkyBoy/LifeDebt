@@ -24,6 +24,7 @@ import top.nkbe.lifedebt.core.LifeDebtAttachments;
 import top.nkbe.lifedebt.core.LifeDebtData;
 import top.nkbe.lifedebt.core.LifeDebtManager;
 import top.nkbe.lifedebt.core.DebtLevel;
+import top.nkbe.lifedebt.core.ContractType;
 import top.nkbe.lifedebt.item.ModItems;
 import top.nkbe.lifedebt.entity.DebtCollectorEntity;
 import top.nkbe.lifedebt.entity.ModEntities;
@@ -115,13 +116,10 @@ public final class LifeDebtEvents {
 					}
 				}
 				if (level == DebtLevel.DEAD_NOT_GONE) {
-					// Terminal debt: the world itself is trying to finish the collection.
+					// Terminal debt must be frightening but recoverable: pressure, never a death loop.
 					player.addStatusEffect(new StatusEffectInstance(StatusEffects.DARKNESS, 100, 0, false, false, false));
 					player.addStatusEffect(new StatusEffectInstance(StatusEffects.SLOWNESS, 100, 1, false, false, false));
-					if (server.getTicks() % 200 == 0) {
-						player.damage(player.getDamageSources().magic(), 4.0f);
-						player.sendMessage(Text.translatable("lifedebt.message.death_sentence"), true);
-					}
+					player.addStatusEffect(new StatusEffectInstance(StatusEffects.WEAKNESS, 100, 0, false, false, false));
 				}
 			}
 		});
@@ -133,11 +131,22 @@ public final class LifeDebtEvents {
 	private static void registerDeathHook() {
 		ServerLivingEntityEvents.ALLOW_DEATH.register((entity, source, amount) -> {
 			if (entity instanceof ServerPlayerEntity player) {
+				if (LifeDebtAttachments.get(player).getContract() == ContractType.NONE) {
+					removeUnsignedTotems(player);
+				}
 				// handleDeath 返回 true 表示已借命并阻止死亡 → 不允许死亡发生。
 				return !LifeDebtManager.handleDeath(player);
 			}
 			return true;
 		});
+	}
+
+	private static void removeUnsignedTotems(ServerPlayerEntity player) {
+		for (int slot = 0; slot < player.getInventory().size(); slot++) {
+			if (player.getInventory().getStack(slot).isOf(Items.TOTEM_OF_UNDYING)) {
+				player.getInventory().setStack(slot, ItemStack.EMPTY);
+			}
+		}
 	}
 
 	private static void registerTotemSigning() {

@@ -78,6 +78,7 @@ public final class LifeDebtNetworking {
 		data.setContract(contract);
 		data.setTotemCharge(DEFAULT_TOTEM_CHARGE);
 		LifeDebtManager.updateContractPenalty(player);
+		player.setHealth(player.getMaxHealth());
 		if (!player.getAbilities().creativeMode) {
 			player.getStackInHand(hand).decrement(1);
 		}

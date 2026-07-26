@@ -9,6 +9,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.block.Blocks;
 import top.nkbe.lifedebt.block.ModBlocks;
 import top.nkbe.lifedebt.core.LifeDebtAttachments;
 import top.nkbe.lifedebt.core.LifeDebtData;
@@ -35,6 +36,7 @@ public final class LifeDebtCommands {
 				dispatcher.register(CommandManager.literal("lifedebt")
 						.requires(source -> source.hasPermissionLevel(2))
 						.then(CommandManager.literal("altar").executes(LifeDebtCommands::placeAltar))
+						.then(CommandManager.literal("locate_altar").executes(LifeDebtCommands::teleportToTestAltar))
 						.then(CommandManager.literal("collector").executes(LifeDebtCommands::spawnCollector))
 						.then(CommandManager.literal("debt")
 								.then(CommandManager.argument("value", IntegerArgumentType.integer(0))
@@ -61,6 +63,27 @@ public final class LifeDebtCommands {
 		world.setBlockState(pos, ModBlocks.DEBT_ALTAR.getDefaultState());
 		ctx.getSource().sendFeedback(
 				() -> Text.literal("已在 " + pos.toShortString() + " 放置债务祭坛。"), false);
+		return Command.SINGLE_SUCCESS;
+	}
+
+	/** Creates a nearby ruin and teleports the operator onto it for immediate testing. */
+	private static int teleportToTestAltar(com.mojang.brigadier.context.CommandContext<ServerCommandSource> ctx)
+			throws com.mojang.brigadier.exceptions.CommandSyntaxException {
+		ServerPlayerEntity player = ctx.getSource().getPlayerOrThrow();
+		ServerWorld world = player.getServerWorld();
+		int x = player.getBlockPos().getX() + 96;
+		int z = player.getBlockPos().getZ() + 96;
+		int y = world.getTopY(net.minecraft.world.Heightmap.Type.WORLD_SURFACE, x, z);
+		BlockPos floor = new BlockPos(x, y, z);
+		for (int dx = -2; dx <= 2; dx++) {
+			for (int dz = -2; dz <= 2; dz++) {
+				world.setBlockState(floor.add(dx, 0, dz), (world.random.nextInt(4) == 0
+						? Blocks.MOSSY_STONE_BRICKS : Blocks.STONE_BRICKS).getDefaultState());
+			}
+		}
+		world.setBlockState(floor.up(), ModBlocks.DEBT_ALTAR.getDefaultState());
+		player.requestTeleport(x + 0.5, y + 2.0, z + 0.5);
+		ctx.getSource().sendFeedback(() -> Text.literal("已傳送至債務祭壇遺跡測試點：" + floor.toShortString()), false);
 		return Command.SINGLE_SUCCESS;
 	}
 

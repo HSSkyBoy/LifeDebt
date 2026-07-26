@@ -29,7 +29,7 @@ public final class ContractEffects {
 	private static final double BLOOD_MAX_DAMAGE_BONUS = 1.5;
 
 	/** 血契借命的额外债务：狂战代价高，「死亡增加大量债务」。 */
-	private static final int BLOOD_EXTRA_DEBT = 2;
+	private static final int BLOOD_EXTRA_DEBT = 1;
 
 	/** 魂契借命减损所需的经验等级；付得起才触发。 */
 	private static final int SOUL_XP_COST = 3;
@@ -63,9 +63,10 @@ public final class ContractEffects {
 		}
 	}
 
-	/** 血契：借命额外累积债务，越战越负。 */
+	/** 血契：借命额外累积债务，并短暂获得力量——越战越负，也越战越狂。 */
 	private static void onBloodBorrow(ServerPlayerEntity player, LifeDebtData data) {
 		data.addDebt(BLOOD_EXTRA_DEBT);
+		player.addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, 1200, 1));
 	}
 
 	/**
@@ -81,12 +82,13 @@ public final class ContractEffects {
 		// 吸收护盾 + 再生：把「更低的生命损失」落成借命瞬间的即时补偿。
 		player.addStatusEffect(new StatusEffectInstance(StatusEffects.ABSORPTION, 600, 1));
 		player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 100, 1));
+		data.setDebt(Math.max(0, data.getDebt() - 1));
 		player.sendMessage(Text.translatable("lifedebt.message.soul_pay", SOUL_XP_COST), true);
 	}
 
 	/**
-	 * 亡契：借命时瞬移脱身并获得短暂无敌（抗性 V ≈ 免伤），代价是额外债务——
-	 * 逃得掉一时，却把追债者引得更近。
+	 * 亡契：借命时瞬移脱身并获得短暂无敌（抗性 V ≈ 免伤），
+	 * 附带速度与短暂隐身，帮助玩家真正脱离战场。
 	 */
 	private static void onEscapeBorrow(ServerPlayerEntity player, LifeDebtData data) {
 		double angle = player.getRandom().nextDouble() * Math.PI * 2.0;
@@ -97,7 +99,8 @@ public final class ContractEffects {
 		player.requestTeleport(x, player.getY(), z);
 		// 抗性 V（amplifier 4）在原版为 100% 减伤，兜住落点与追兵的短窗口。
 		player.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, 60, 4));
-		data.addDebt(1);
+		player.addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, 100, 1));
+		player.addStatusEffect(new StatusEffectInstance(StatusEffects.INVISIBILITY, 60, 0));
 		player.sendMessage(Text.translatable("lifedebt.message.escape"), true);
 	}
 
