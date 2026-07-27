@@ -10,16 +10,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import top.nkbe.lifedebt.core.LifeDebtManager;
 
 /**
- * 签约者手持不死图腾时，借命优先于原版图腾免死——债务照记、图腾保留。
- * 未签约或容量耗尽时不干涉，原版图腾行为照常。
+ * 玩家受到致命伤时，拦截原版不死图腾保护，统一交由命债系统处理。
+ * 有剩余容量时借命成功；容量耗尽或未签约时则正常死亡。
  */
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityTotemMixin {
 
 	@Inject(method = "tryUseDeathProtector", at = @At("HEAD"), cancellable = true)
 	private void lifedebt$borrowBeforeTotem(DamageSource source, CallbackInfoReturnable<Boolean> cir) {
-		if ((Object) this instanceof ServerPlayerEntity player && LifeDebtManager.handleDeath(player)) {
-			cir.setReturnValue(true);
+		if ((Object) this instanceof ServerPlayerEntity player) {
+			// Never fall through to vanilla Totem of Undying behavior. The return
+			// value reflects whether Life Debt successfully prevented the death.
+			cir.setReturnValue(LifeDebtManager.handleDeath(player));
 		}
 	}
 }

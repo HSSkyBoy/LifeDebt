@@ -75,7 +75,7 @@
 
 本模组仅支持 **Minecraft 1.21.11**，不再维护旧版本。
 
-加载器：Fabric Loader `>=0.19.0`。需要 Fabric API。
+加载器：Fabric Loader `>=0.19.3`。需要 Fabric API。
 
 ## 许可
 
